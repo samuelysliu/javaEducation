@@ -34,13 +34,13 @@ def register(request):
 
 # 取得用戶資訊
 class userProfile(APIView):
-    authentication_classes = [JSONWebTokenAuthentication, ]  # Token的驗證
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
+    #authentication_classes = [JSONWebTokenAuthentication, ]  # Token的驗證
+    #permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         username = request.user.username
         teacher = request.user.is_staff
-
         return Response({'username': username, 'isTeacher': teacher})
 
     # 修改密碼
