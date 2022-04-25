@@ -34,9 +34,8 @@ def register(request):
 
 # 取得用戶資訊
 class userProfile(APIView):
-    permission_classes = (IsAuthenticated,)
-    #authentication_classes = [JSONWebTokenAuthentication, ]  # Token的驗證
-    #permission_classes = [IsAuthenticated]
+    authentication_classes = [JSONWebTokenAuthentication, ]  # Token的驗證
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         username = request.user.username
