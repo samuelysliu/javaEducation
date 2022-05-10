@@ -169,7 +169,7 @@ class javaFile(APIView):
             serializer = self.serializers(data)
             filePath = serializer.data['filePath']
 
-            f = open(filePath, "r")
+            f = open(filePath, "r", encoding="utf-8")
             words = f.read()
             f.close()
         except Exception as e:
