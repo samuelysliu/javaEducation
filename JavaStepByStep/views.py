@@ -94,9 +94,9 @@ class addProject(APIView):
 
     # 修改題目
     def put(self, request, *args, **kwargs):
-        projectId = request.GET['projectId']
         data = request.data
-        print(data)
+        print()
+        projectId=data['projectId']
         try:
             serializer = self.serializers(data=data)
             serializer.is_valid(raise_exception=True)
