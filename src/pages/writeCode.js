@@ -10,8 +10,8 @@ import Image from '../src/images/Image.png'
 import { useSearchParams } from 'react-router-dom';
 
 function WriteCode(props) {
-    const apiPath = "http://127.0.0.1:8000/"
-    
+    const apiPath = "http://127.0.0.1:8000"
+
     const topic = {
         textAlign: 'center'
     }
@@ -21,28 +21,19 @@ function WriteCode(props) {
     }
     const [project, setProject] = useState({ title: '', content: '', step1: '', step2: '', step3: '' });    //設定題目的初始值，等取得實際題目內容後代入
     const [params, setParams] = useSearchParams();  //取得url 帶的值
-    const [hasDone, setHasDone] = useState(false);  //該學生是否已經做過此題目
 
-    const [username, setUsername] = useState(props.username)
+    const [username, setUsername] = useState()
 
     useEffect(() => {
-        //取得目前使用者名稱
-        axios.get(apiPath + 'api/userProfile', props.config)
+        //取得題目內容
+        axios.get(apiPath + '/api/addProject?projectId=' + params.get('projectId'), props.config).then((res) => {
+            setProject(res['data']);
+        }).catch((error) => console.log(error));
+
+        //取得使用者身分
+        axios.get(apiPath + '/api/userProfile', props.config)
             .then((res) => {
-                setUsername(res['data'].username);
-                //確認此使用者是否做過此題
-                axios.get(apiPath + 'api/javaFile?projectId=' + params.get('projectId') + "&reviewed=" + res['data'].username, props.config).then((res) => {
-                    if (res['data']['error'] == 'does not exist') {
-                        //如果沒做過才顯示題目
-                        axios.get('http://127.0.0.1:8000/api/addProject?projectId=' + params.get('projectId'), props.config).then((res) => {
-                            setProject(res['data']);
-                        }).catch((error) => console.log(error));
-                    } else {
-                        setHasDone(true)
-                    }
-                }).catch((error) => {
-                    console.log(error)
-                });
+                setUsername(res['data'].username)
             })
             .catch((error) => console.log())
     }, []);
@@ -72,7 +63,7 @@ function WriteCode(props) {
         data.append('fileName', file[0]['name'])
         data.append('file', file[0])
         try {
-            axios.post('http://127.0.0.1:8000/api/javaFile', data, props.config)
+            axios.post(apiPath + '/api/javaFile', data, props.config)
                 .then((res) => {
                     window.location.href = "/"
                     console.log(res)
@@ -88,67 +79,63 @@ function WriteCode(props) {
         <>
             <Header />
             <Container>
-                {hasDone ?
-                    <Alert variant="danger" onClose={() => window.location.href = './projectList'} dismissible>
-                        <Alert.Heading>你已經完成這項題目喽！</Alert.Heading>
-                    </Alert> :
-                    (<>
-                        <Row>
-                            <Col><h1>{project.title}</h1></Col>
-                        </Row>
-                        <Row>
-                            <Col><p style={topic}>{project.content}</p></Col>
-                        </Row>
-                        <Row style={interval}>
-                            <Col>
-                                <h3>第一步驟</h3>
-                                <p>{project.step1}</p>
-                                <Iframe url='https://trinket.io/embed/java/0ec180e5e6' width='100%' height='356px;'></Iframe>
-                            </Col>
-                        </Row>
-                        <Row style={interval}>
-                            <Col>
-                                <h3>第二步驟</h3>
-                                <p>{project.step2}</p>
-                                <Iframe url='https://trinket.io/embed/java/0ec180e5e6' width='100%' height='356px;'></Iframe>
-                            </Col>
-                        </Row>
-                        <Row style={interval}>
-                            <Col>
-                                <h3>第三步驟</h3>
-                                <p>{project.step3}</p>
-                                <Iframe url='https://trinket.io/embed/java/0ec180e5e6' width='100%' height='356px;'></Iframe>
-                            </Col>
-                        </Row>
-                        <Row style={interval}>
-                            <Col>
-                                <Dropzone onDrop={handleDrop} accept={'.java'}>
-                                    {({ getRootProps, getInputProps }) => (
-                                        <div {...getRootProps({ style: uploadFileContent })}>
-                                            <input {...getInputProps()} />
-                                            <img src={Image} className="uploadFileIcon"></img>
-                                            <p><strong>請上傳您最終的Java檔</strong></p>
-                                        </div>
 
-                                    )}
-                                </Dropzone>
-                                <div>
-                                    <strong>Files:</strong>
-                                    <ul>
-                                        {fileNames.map(fileName => (
-                                            <li key={fileName}>{fileName}</li>
-                                        ))}
-                                    </ul>
+                <Row>
+                    <Col><h1>{project.title}</h1></Col>
+                </Row>
+                <Row>
+                    <Col><p style={topic}>{project.content}</p></Col>
+                </Row>
+                <Row style={interval}>
+                    <Col>
+                        <h3>第一步驟</h3>
+                        <p>{project.step1}</p>
+                        <Iframe url='https://trinket.io/embed/java/0ec180e5e6' width='100%' height='356px;'></Iframe>
+                    </Col>
+                </Row>
+                <Row style={interval}>
+                    <Col>
+                        <h3>第二步驟</h3>
+                        <p>{project.step2}</p>
+                        <Iframe url='https://trinket.io/embed/java/0ec180e5e6' width='100%' height='356px;'></Iframe>
+                    </Col>
+                </Row>
+                <Row style={interval}>
+                    <Col>
+                        <h3>第三步驟</h3>
+                        <p>{project.step3}</p>
+                        <Iframe url='https://trinket.io/embed/java/0ec180e5e6' width='100%' height='356px;'></Iframe>
+                    </Col>
+                </Row>
+                <Row style={interval}>
+                    <Col>
+                        <Dropzone onDrop={handleDrop} accept={'.java'}>
+                            {({ getRootProps, getInputProps }) => (
+                                <div {...getRootProps({ style: uploadFileContent })}>
+                                    <input {...getInputProps()} />
+                                    <img src={Image} className="uploadFileIcon"></img>
+                                    <p><strong>請上傳您最終的Java檔</strong></p>
                                 </div>
-                            </Col>
-                        </Row>
 
-                        <Row style={interval}>
-                            <Col>
-                                <Button onClick={handleSubmit}>確認上傳</Button>
-                            </Col>
-                        </Row>
-                    </>)}
+                            )}
+                        </Dropzone>
+                        <div>
+                            <strong>Files:</strong>
+                            <ul>
+                                {fileNames.map(fileName => (
+                                    <li key={fileName}>{fileName}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </Col>
+                </Row>
+
+                <Row style={interval}>
+                    <Col>
+                        <Button onClick={handleSubmit}>確認上傳</Button>
+                    </Col>
+                </Row>
+
             </Container>
 
         </>
