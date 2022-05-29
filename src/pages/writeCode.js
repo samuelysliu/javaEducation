@@ -34,7 +34,9 @@ function WriteCode(props) {
                 axios.get(apiPath + 'api/javaFile?projectId=' + params.get('projectId') + "&reviewed=" + res['data'].username, props.config).then((res) => {
                     if (res['data']['error'] == 'does not exist') {
                         //如果沒做過才顯示題目
-                        
+                        axios.get('http://127.0.0.1:8000/api/addProject?projectId=' + params.get('projectId'), props.config).then((res) => {
+                            setProject(res['data']);
+                        }).catch((error) => console.log(error));
                     } else {
                         setHasDone(true)
                     }
