@@ -43,7 +43,16 @@ function EditProjectContent(props) {
                 window.location.href = "/editProject"
             })
             .catch((error) => console.log(error))
+    }
 
+    const deleteProject = () =>{
+        let data = {"projectId": params.get('projectId') }
+        
+        axios.post(apiPath + 'api/deleteProject', data, props.config)
+            .then((res) => {
+                window.location.href = "/editProject"
+            })
+            .catch((error) => console.log(error))
     }
 
     return (
@@ -77,9 +86,12 @@ function EditProjectContent(props) {
                                 <Form.Label>題目分解步驟三：</Form.Label>
                                 <Form.Control as="textarea" rows={3} value={project.step3} onChange={(e) => handleSetProject('step3', e.target.value)} />
                             </Form.Group>
-                            <Button variant="success" style={{ width: '30%' }} onClick={subProject}>送出</Button>
                         </Form>
                     </Col>
+                </Row>
+                <Row>
+                    <Col><Button variant="danger" style={{ width: '30%' }} onClick={deleteProject}>刪除</Button></Col>
+                    <Col><Button variant="success" style={{ width: '30%' }} onClick={subProject}>送出</Button></Col>
                 </Row>
             </Container>
 
