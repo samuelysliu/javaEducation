@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/comment', views.CommentView.as_view()),
     path('api/javaFile', views.javaFile.as_view()),
     path('api/addProject', views.addProject.as_view()),
+    path('api/deleteProject', views.deleteProject.as_view()),
     path('api/projectStudentList', views.projectStudentList.as_view()),
     path('api/studentWork', views.studentWork.as_view())
 ]

@@ -95,7 +95,6 @@ class addProject(APIView):
     # 修改題目
     def put(self, request, *args, **kwargs):
         data = request.data
-        print()
         projectId=data['projectId']
         try:
             serializer = self.serializers(data=data)
@@ -121,6 +120,23 @@ class addProject(APIView):
         response = {'message': 'success'}
         return Response(response)
 
+class deleteProject(APIView):
+    serializers = projectSerializer
+    authentication_classes = [JSONWebTokenAuthentication, ]  # Token的驗證
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        projectId = data['projectId']
+
+        try:
+            project = Project.objects.get(id=projectId)
+            project.delete()
+        except Exception as e:
+            data = {'error': str(e)}
+
+        data = {'message': 'success'}
+        return Response(data)
 
 # 留言功能API
 class CommentView(APIView):
@@ -182,6 +198,7 @@ class javaFile(APIView):
         data = request.FILES['file']
         filepath = 'JavaFile/' + request.data['owner'] + '/' + request.data['fileName']
         i = 0
+
         while os.path.isfile(filepath):
             filepath = filepath.split('.java')[0] + str(i) + '.java'
             i += 1
@@ -189,15 +206,25 @@ class javaFile(APIView):
         path = default_storage.save(filepath, ContentFile(data.read()))
         os.path.join(settings.MEDIA_ROOT, path)
 
+        projectId = request.data['projectId']
+        owner = request.data['owner']
         data = QueryDict(
-            'projectId=' + request.data['projectId'] + '&owner=' + request.data['owner'] + '&filePath=' + filepath)
+            'projectId=' + projectId + '&owner=' + owner + '&filePath=' + filepath)
+
         try:
-            serializer = self.serializers(data=data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+            origin = File.objects.get(projectId=projectId, owner=owner)
+            origin.filePath = filepath
+            origin.save()   
+
         except Exception as e:
-            data = {'error': str(e)}
-            return Response(data)
+            try:
+                serializer = self.serializers(data=data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+
+            except Exception as e:
+                data = {'error': str(e)}
+                return Response(data)
 
         data = {'message': 'success'}
         return Response(data)
