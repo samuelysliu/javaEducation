@@ -9,7 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 
 
 function EditProjectContent(props) {
-    const apiPath = 'http://127.0.0.1:8000/';
+    const apiPath = 'http://127.0.0.1:8000';
 
     const centerContainer = {
         textAlign: "center"
@@ -25,7 +25,7 @@ function EditProjectContent(props) {
     }
 
     useEffect(() => {
-        axios.get(apiPath + 'api/addProject?projectId=' + params.get('projectId'), props.config).then((res) => {
+        axios.get(apiPath + '/api/addProject?projectId=' + params.get('projectId'), props.config).then((res) => {
             setProject(res['data']);
         }).catch((error) => console.log(error));
     }, [])
@@ -38,7 +38,7 @@ function EditProjectContent(props) {
         data.append("step1", project.step1)
         data.append("step2", project.step2)
         data.append("step3", project.step3)
-        axios.put(apiPath + 'api/addProject', data, props.config)
+        axios.put(apiPath + '/api/addProject', data, props.config)
             .then((res) => {
                 window.location.href = "/editProject"
             })
@@ -48,7 +48,7 @@ function EditProjectContent(props) {
     const deleteProject = () =>{
         let data = {"projectId": params.get('projectId') }
         
-        axios.post(apiPath + 'api/deleteProject', data, props.config)
+        axios.post(apiPath + '/api/deleteProject', data, props.config)
             .then((res) => {
                 window.location.href = "/editProject"
             })
