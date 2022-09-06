@@ -5,8 +5,8 @@ import { Row, Col, Container, Card } from 'react-bootstrap';
 import React, { useState } from 'react'
 import '../index.css'
 import axios from 'axios';
-import code from '../src/images/Code.png'
-import comment from '../src/images/Comment.png'
+import code from '../images/Code.png'
+import comment from '../images/Comment.png'
 
 
 function Index() {
