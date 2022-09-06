@@ -57,7 +57,7 @@ class fileInfo:
 
     def getFileByUserAndProject(self):
         try:
-            result = col.find({"userId": ObjectId(self["userId"]), "projectId": self["projectId"]})
+            result = col.find({"account": self["account"], "projectId": ObjectId(self["projectId"])})
             fileArray = []
             for i in result:
                 fileArray.append(

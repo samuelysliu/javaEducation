@@ -5,7 +5,7 @@ from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
-from control import userProfile, projectControl
+from control import userProfile, projectControl, commentControl, fileControl
 
 
 app = Flask(__name__, static_folder='templates/build')
@@ -17,7 +17,7 @@ CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config["JWT_SECRET_KEY"] = "gnidoCpetSeerht"  # Change this!
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=2)
 jwt = JWTManager(app)
 api = Api(app)
 
@@ -73,6 +73,9 @@ class user(Resource):
 
 class project(Resource):
     @jwt_required()
+    def __init__(self):
+        return None
+
     def get(self):
         projectId = request.args.get("projectId")
         className = request.args.get("className")
@@ -88,7 +91,6 @@ class project(Resource):
 
         return {"result": result}
 
-    @jwt_required()
     def post(self):
         user = get_jwt_identity()
         if user["authority"] == "admin" or user["authority"] == "teacher":
@@ -97,7 +99,6 @@ class project(Resource):
             result = "failed"
         return {"result": result}
 
-    @jwt_required()
     def put(self):
         user = get_jwt_identity()
         if user["authority"] == "admin" or user["authority"] == "teacher":
@@ -106,7 +107,6 @@ class project(Resource):
             result = "failed"
         return {"result": result}
 
-    @jwt_required()
     def delete(self):
         user = get_jwt_identity()
         if user["authority"] == "admin" or user["authority"] == "teacher":
@@ -118,13 +118,52 @@ class project(Resource):
 
 class comment(Resource):
     @jwt_required()
-    def get(self):
+    def __init__(self):
+        return None
 
+    def get(self):
+        projectId = request.args.get("projectId")
+        result = commentControl.getCommentByProject(projectId)
+        return {"result": result}
+
+    def post(self):
+        data = request.get_json()
+        user = get_jwt_identity()
+
+        data["commentator"] = user["account"]
+
+        result = commentControl.saveComment(data)
+        return {"result": result}
+
+class file(Resource):
+    @jwt_required()
+    def __init__(self):
+        return None
+
+    def get(self):
+        projectId = request.args.get("projectId")
+        account = request.args.get("account")
+
+        result = fileControl.getFileByUserAndProject(projectId, account)
+        return {"result": result}
+
+    def post(self):
+        user = get_jwt_identity()
+        file = request.files["file"]
+        fileName = file.filename
+        projectId = request.form["projectId"]
+        account = user["account"]
+        stepNum = request.form["stepNum"]
+
+        result = fileControl.saveFile(file, fileName, projectId, account, stepNum)
+        return {"result": result}
 
 
 api.add_resource(register, '/api/register')
 api.add_resource(user, '/api/user')
 api.add_resource(project, '/api/project')
+api.add_resource(comment, '/api/comment')
+api.add_resource(file, '/api/file')
 
 if __name__ == '__main__':
     app.run()

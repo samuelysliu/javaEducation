@@ -9,7 +9,7 @@ class commentInfo:
     def saveComment(self):
         try:
             result = col.insert_one(
-                {"projectId": ObjectId(self["projectId"]), "commentator": ObjectId(self["commentator"]),
+                {"projectId": ObjectId(self["projectId"]), "commentator": self["commentator"],
                  "comment": self["comment"], "createdTime": tools.getTimeNow()})
             return result.inserted_id
         except:
@@ -31,7 +31,7 @@ class commentInfo:
 
     def getCommentByCommentator(self):
         try:
-            result = col.find({"commentator": ObjectId(self["commentator"])})
+            result = col.find({"commentator": self["commentator"]})
             projectArray = []
             for i in result:
                 projectArray.append(
