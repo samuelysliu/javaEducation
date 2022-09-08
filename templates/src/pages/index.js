@@ -7,25 +7,30 @@ import '../index.css'
 import axios from 'axios';
 import code from '../images/Code.png'
 import comment from '../images/Comment.png'
-
+import { useSelector } from 'react-redux'
+import { useNavigate } from "react-router-dom";
 
 function Index() {
+    const navigate = useNavigate();
 
     const toWriteCode = () => {
-        window.location.href = "./projectList"
+        navigate("/projectList")
     }
 
     const toAssessment = () => {
-        window.location.href = "./assessmentList"
+        navigate("/assessmentList")
     }
+
+    const userName = useSelector((state) => state.userProfile.value["account"])
+    const authority = useSelector((state) => state.userProfile.value["authority"])
 
     return (
         <>
-            <Header />
-            <SideBar item='' />
+            <Header hasLogin={true}/>
+            <SideBar />
             <Container>
                 <Row>
-                    <Col lg={12} xd={12}><h1>Java 小課堂</h1></Col>
+                    <Col lg={12} xd={12}><h1>Java 課堂</h1></Col>
                 </Row>
                 <Row>
                     <Col lg={8} xs={12}><h2>今日挑戰</h2></Col>

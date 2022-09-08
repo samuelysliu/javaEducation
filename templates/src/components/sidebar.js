@@ -20,17 +20,17 @@ import { AiFillCode, AiOutlineComment, AiFillFileAdd, AiFillEdit } from "react-i
 import { BsPersonCheckFill } from "react-icons/bs"
 import { Button } from 'react-bootstrap';
 import axios from 'axios';
+import { useSelector } from 'react-redux'
 
 const SideBar = ({ item }) => {
-    const apiPath = 'http://127.0.0.1:8000';
-    const token = localStorage.getItem('token')
-
-    const config = {
-        headers: { Authorization: `JWT ${token}` }
-    };
-
-    const [username, setUsername] = useState();
-    const [isTeacher, setIsTeacher] = useState();
+    const userName = useSelector((state) => state.userProfile.value["account"])
+    const authority = useSelector((state) => state.userProfile.value["authority"])
+    let isTeacher
+    if(authority === "teacher"){
+        isTeacher = true
+    }else{
+        isTeacher = false
+    }
 
     const [menuCollapse, setMenuCollapse] = useState(false)
     //create a custom function that will change menucollapse state from false to true and true to false
@@ -66,12 +66,6 @@ const SideBar = ({ item }) => {
 
     useEffect(() => {
         menuItemClick(item);
-        axios.get(apiPath + '/api/userProfile', config)
-            .then((res) => {
-                setUsername(res['data'].username)
-                setIsTeacher(res['data'].isTeacher)
-            })
-            .catch((error) => window.location.href = "/login")
     }, []);
 
     const aStyle = {
@@ -86,7 +80,7 @@ const SideBar = ({ item }) => {
                         <div className="logotext">
                             {/* small and big change using menucollapse state */}
                             {menuCollapse ? "" : <img src={user} width='80px'></img>}
-                            <p> {username} </p>
+                            <p> {userName} </p>
                         </div>
                     </SidebarHeader>
 

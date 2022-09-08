@@ -4,6 +4,9 @@
   "private": true,
   "homepage": "./",
   "dependencies": {
+    "@emotion/css": "^11.10.0",
+    "@monaco-editor/react": "^4.4.5",
+    "@reduxjs/toolkit": "^1.8.5",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -17,6 +20,7 @@
     "react-icons": "^4.3.1",
     "react-iframe": "^1.8.0",
     "react-pro-sidebar": "^0.7.1",
+    "react-redux": "^8.0.2",
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
     "react-simple-star-rating": "^4.0.5",

@@ -8,9 +8,11 @@ import Iframe from 'react-iframe'
 import Dropzone, { useDropzone } from "react-dropzone";
 import Image from '../images/Image.png'
 import { useSearchParams } from 'react-router-dom';
+import { useSelector } from 'react-redux'
+import { css } from '@emotion/css'
 
-function WriteCode(props) {
-    const apiPath = "http://127.0.0.1:8000"
+function WriteCode({apiPath, config}) {
+    const userName = useSelector((state) => state.userProfile.value["account"])
 
     const topic = {
         textAlign: 'center'
@@ -22,20 +24,11 @@ function WriteCode(props) {
     const [project, setProject] = useState({ title: '', content: '', step1: '', step2: '', step3: '' });    //設定題目的初始值，等取得實際題目內容後代入
     const [params, setParams] = useSearchParams();  //取得url 帶的值
 
-    const [username, setUsername] = useState()
-
     useEffect(() => {
         //取得題目內容
-        axios.get(apiPath + '/api/addProject?projectId=' + params.get('projectId'), props.config).then((res) => {
-            setProject(res['data']);
+        axios.get(apiPath + '/api/project?projectId=' + params.get('projectId'), config).then((res) => {
+            setProject(res["data"]["result"]);
         }).catch((error) => console.log(error));
-
-        //取得使用者身分
-        axios.get(apiPath + '/api/userProfile', props.config)
-            .then((res) => {
-                setUsername(res['data'].username)
-            })
-            .catch((error) => console.log())
     }, []);
 
     const uploadFileContent = {
@@ -59,11 +52,11 @@ function WriteCode(props) {
         event.preventDefault()
         let data = new FormData();
         data.append('projectId', params.get('projectId'))
-        data.append('owner', username)
+        data.append('owner', userName)
         data.append('fileName', file[0]['name'])
         data.append('file', file[0])
         try {
-            axios.post(apiPath + '/api/javaFile', data, props.config)
+            axios.post(apiPath + '/api/javaFile', data, config)
                 .then((res) => {
                     window.location.href = "/"
                     console.log(res)
@@ -78,8 +71,7 @@ function WriteCode(props) {
     return (
         <>
             <Header />
-            <Container>
-
+            <Container className={style}>
                 <Row>
                     <Col><h1>{project.title}</h1></Col>
                 </Row>
@@ -143,3 +135,9 @@ function WriteCode(props) {
 }
 
 export default WriteCode;
+
+const style = css`
+    h3{
+        font-weight: 900;
+    }
+`

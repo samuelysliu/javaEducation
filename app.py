@@ -1,12 +1,15 @@
 from datetime import timedelta
 from flask import Flask, request, send_from_directory
+import requests
 from flask_restful import Api, Resource
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
 from control import userProfile, projectControl, commentControl, fileControl
+import subprocess
 
+load_dotenv()
 
 app = Flask(__name__, static_folder='templates/build')
 # CORS(app, resources={r"/api/.*": {"origins": [os.getenv("REACT_APP_APIPATH")]}})
@@ -35,7 +38,7 @@ def serve(path):
 
 
 class register(Resource):
-    # user login
+    # user register
     def post(self):
         result = userProfile.register(request.get_json())
         return {"result": result}
@@ -62,7 +65,6 @@ class user(Resource):
     @jwt_required()
     def put(self):
         data = request.get_json()
-        print(data)
         if data["type"] == 'password':
             result = userProfile.changePassword(data)
             return {"result": result}
@@ -143,9 +145,14 @@ class file(Resource):
     def get(self):
         projectId = request.args.get("projectId")
         account = request.args.get("account")
+        step = request.args.get("step")
 
-        result = fileControl.getFileByUserAndProject(projectId, account)
-        return {"result": result}
+        fileArray = fileControl.getFileByUserAndProject(projectId, account)
+
+        for i in fileArray:
+            if step == i["stepNum"]:
+                return send_from_directory(i["filePath"], i["fileName"])
+        return {"result": "failed"}
 
     def post(self):
         user = get_jwt_identity()
@@ -158,12 +165,28 @@ class file(Resource):
         result = fileControl.saveFile(file, fileName, projectId, account, stepNum)
         return {"result": result}
 
+class compiler(Resource):
+    def post(self):
+        front = request.get_json()
+        data = {
+            "clientId": os.getenv("clientId_1"),
+            "clientSecret": os.getenv("clientSecret_1"),
+            "script": front["code"],
+            "language": "java",
+            "versionIndex": "3"
+        }
+
+        response = requests.post(url="https://stage.jdoodle.com/execute", json=data)
+        print(response.text)
+        return {"result": "success"}
+
 
 api.add_resource(register, '/api/register')
 api.add_resource(user, '/api/user')
 api.add_resource(project, '/api/project')
 api.add_resource(comment, '/api/comment')
 api.add_resource(file, '/api/file')
+api.add_resource(compiler, '/api/compiler')
 
 if __name__ == '__main__':
     app.run()

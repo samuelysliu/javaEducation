@@ -7,6 +7,7 @@ def getFileByUserAndProject(projectId, account):
     return fileInfo.getFileByUserAndProject({"projectId": projectId, "account": account})
 
 
+
 def saveFile(file, fileName, projectId, account, stepNum):
     filePath = 'JavaFile/' + str(account) + '/' + projectId
     fileName = stepNum + '_' + fileName
@@ -15,7 +16,7 @@ def saveFile(file, fileName, projectId, account, stepNum):
 
     file.save(os.path.join(filePath, fileName))
 
-    result = fileInfo.saveFile({"projectId": projectId, "stepNum": stepNum, "account": account, "filePath": filePath})
+    result = fileInfo.saveFile({"projectId": projectId, "stepNum": stepNum, "account": account, "filePath": filePath, "fileName": fileName})
 
     if result != "failed":
         return "success"

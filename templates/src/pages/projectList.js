@@ -6,12 +6,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import SideBar from '../components/sidebar';
 
-function ProjectList(props) {
+function ProjectList({apiPath, config}) {
     const [project, setProject] = useState([{ title: '', id: ''}])
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/addProject?projectId=', props.config).then((res) => {
-            setProject(res['data'][0]);
+        axios.get(apiPath + '/api/project', config).then((res) => {
+            setProject(res['data']["result"]);
         }).catch((error) => console.log(error));
 
     }, []);

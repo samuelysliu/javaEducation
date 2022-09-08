@@ -1,65 +1,60 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
 import { Nav, Navbar, Container, NavDropdown } from 'react-bootstrap'
 import logo from '../images/logo.png'
 import user from '../images/user.png'
-import axios from 'axios';
+import { css } from '@emotion/css'
+import { useNavigate } from "react-router-dom";
 
-
-function Header() {
-    const token = localStorage.getItem('token')
-
-    const config = {
-        headers: { Authorization: `JWT ${token}` }
-    };
-
-    const [hasLogin, setHasLogin] = useState(false)
-    useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/userProfile', config)
-            .then((res) => {
-                setHasLogin(true)
-            })
-            .catch((error) => setHasLogin(false))
-    }, []);
-
-    const navbarStyle = {
-        backgroundColor: '#378DFC',
-    }
+function Header({ hasLogin }) {
+    const navigate = useNavigate();
 
     const logout = () => {
         localStorage.setItem('token', "")
-        window.location.href = "/login"
+        navigate("/login")
     }
     return (
-        <Navbar collapseOnSelect expand="lg" variant="dark" style={navbarStyle}>
-            <Container>
-                <Navbar.Brand href="/"><img src={logo} style={{ width: '30px', marginRight: '5px' }}></img>Java程式教學</Navbar.Brand>
-                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse id="responsive-navbar-nav">
-                    <Nav className="me-auto">
-                        <Nav.Link href="/">回首頁</Nav.Link>
-                        <Nav.Link href="./projectList">程式練習</Nav.Link>
-                        <Nav.Link href="./assessmentList">同儕互評</Nav.Link>
-                    </Nav>
-                    <Nav>
+        <div className={style}>
+            <Navbar collapseOnSelect expand="lg" variant="dark" className="navbar">
+                <Container>
+                    <Navbar.Brand href="/"><img src={logo} style={{ width: '30px', marginRight: '5px' }}></img>Java程式教學</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <Navbar.Collapse id="responsive-navbar-nav">
+                        <Nav className="me-auto">
+                            <Nav.Link><Link to="/">回首頁</Link></Nav.Link>
+                            <Nav.Link><Link to="/projectList">程式練習</Link></Nav.Link>
+                            <Nav.Link><Link to="/assessmentList">同儕互評</Link></Nav.Link>
+                        </Nav>
+                        <Nav>
 
-                        {hasLogin ?
-                            <>
-                                <NavDropdown title={<img src={user} width='30px'></img>}>
-                                    <NavDropdown.Item href="/profile">個人檔案</NavDropdown.Item>
-                                    {/*
+                            {hasLogin ?
+                                <>
+                                    <NavDropdown title={<img src={user} width='30px'></img>}>
+                                        <NavDropdown.Item href="/profile">個人檔案</NavDropdown.Item>
+                                        {/*
                             <NavDropdown.Item href="#action/3.2">我的成品</NavDropdown.Item>
                             <NavDropdown.Item href="#action/3.3">收到的評論</NavDropdown.Item>*/}
-                                    <NavDropdown.Divider />
-                                    <NavDropdown.Item onClick={logout}>登出</NavDropdown.Item>
-                                </NavDropdown> </> :
-                            ""
-                        }
-                    </Nav>
-                </Navbar.Collapse>
-            </Container>
-        </Navbar >
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item onClick={logout}>登出</NavDropdown.Item>
+                                    </NavDropdown> </> :
+                                ""
+                            }
+                        </Nav>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar >
+        </div>
     );
 }
 
 export default Header;
+
+const style = css`
+    .navbar{
+        background-color: #378DFC;
+    }
+    a{
+        color: white;
+        text-decoration: none;
+    }
+`
