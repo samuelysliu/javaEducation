@@ -6,38 +6,35 @@ import { Container, Form, Row, Col, Button } from 'react-bootstrap'
 import commentImg from '../images/Comment.png'
 import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
+import CodeEditor from './codeEditor';
+import { useNavigate } from "react-router-dom";
+import { css } from '@emotion/css'
 
+function Assessment({ apiPath, config }) {
+  const navigate = useNavigate();
 
-function Assessment(props) {
   const [sourceCode, setSourceCode] = useState();
   const [params, setParams] = useSearchParams();
   const projectId = params.get('projectId');
   const owner = params.get('owner');
-  const [project, setProject] = useState();
+  const [project, setProject] = useState({
+    "title": "", "class": "", "content": "",
+    "step1": "", "step2": "", "step3": ""
+  });
   const [commentRecord, setCommentRecord] = useState([{ comment: '', commentator: '', projectId: '', response: '', reviewed: '' }]);
 
   useEffect(() => {
     //取得題目
-    axios.get('http://127.0.0.1:8000/api/addProject?projectId=' + projectId, props.config).then((res) => {
-      setProject(res['data'].content);
-    }).catch((error) => console.log(error));
-
-    //取得評論對象程式碼作品
-    axios.get('http://127.0.0.1:8000/api/javaFile?projectId=' + projectId + "&reviewed=" + owner, props.config).then((res) => {
-      setSourceCode(res['data'].replaceAll("< ", "").replaceAll("<", "< ").replaceAll("\n", "<br/>").replaceAll(" ", "&nbsp;"))
+    axios.get(apiPath + '/api/project?projectId=' + projectId, config).then((res) => {
+      setProject(res["data"]["result"]);
     }).catch((error) => console.log(error));
 
     //取得所有評論
-    axios.get('http://127.0.0.1:8000/api/comment?projectId=' + projectId + "&reviewed=" + owner, props.config).then((res) => {
-      setCommentRecord(res['data'])
+    axios.get(apiPath + '/api/comment?projectId=' + projectId, config).then((res) => {
+      setCommentRecord(res["data"]["result"])
     }).catch((error) => console.log(error));
 
   }, []);
-
-  const interval = {
-    paddingTop: '15px',
-    paddingBottom: '10px'
-  }
 
   const card = {
     border: '1px solid white',
@@ -47,54 +44,66 @@ function Assessment(props) {
   }
 
   const [comment, setComment] = useState()
-  const [rating, setRating] = useState(0) // initial rating value
 
   const commentSubmit = () => {
     //傳送評論
-    let data = new FormData();
-    data.append('projectId', projectId)
-    data.append('commentator', props.username)
-    data.append('reviewed', owner)
-    data.append('comment', comment)
-    axios.post('http://127.0.0.1:8000/api/comment', data, props.config).then((res) => {
-      window.location.reload()
+    let data = {
+      projectId: projectId,
+      comment: comment
+    }
+    axios.post(apiPath + '/api/comment', data, config).then((res) => {
+      setComment("")
+      //刷新所有評論
+      axios.get(apiPath + '/api/comment?projectId=' + projectId, config).then((res) => {
+        setCommentRecord(res["data"]["result"])
+      }).catch((error) => console.log(error));
     }).catch((error) => console.log(error))
 
-    /*
-    //傳送分數
-    let score = new FormData();
-    score.append('projectId', projectId)
-    score.append('commentator', props.username)
-    score.append('rating', rating)
-    axios.put('http://127.0.0.1:8000/api/assignComment', score, props.config).then((res) => {
-      window.location.href = "/";
-    }).catch((error) => console.log(error))
-    */
   }
 
   return (
     <>
-      <Header />
-      <Container>
+      <Header hasLogin={true} />
+      <Container className={style}>
         <Row>
           <Col><h1><img src={commentImg} style={{ width: '50px' }}></img>同儕互評</h1></Col>
         </Row>
-        <Row style={interval}>
+        <Row className = "interval">
           <Col style={{ textAlign: 'center' }}><h3>{owner} 同學</h3></Col>
         </Row>
-        <Row style={interval}>
-          <Col style={{ textAlign: 'center' }}><p>{project}</p></Col>
+        <Row className = "interval">
+          <Col style={{ textAlign: 'center' }}><p>{project.content}</p></Col>
         </Row>
-        <Row style={interval}>
+
+        <Row className = "interval">
           <Col style={card}>
-            <div dangerouslySetInnerHTML={{ __html: sourceCode }} />
+            <h2>Step1</h2>
+            <p>{project.step1}</p>
+            <CodeEditor apiPath={apiPath} projectId={projectId} stepNum="1" config={config} readOnly={true} />
           </Col>
         </Row>
+
+        <Row className = "interval">
+          <Col style={card}>
+            <h2>Step2</h2>
+            <p>{project.step2}</p>
+            <CodeEditor apiPath={apiPath} projectId={projectId} stepNum="2" config={config} readOnly={true} />
+          </Col>
+        </Row>
+
+        <Row className = "interval">
+          <Col style={card}>
+            <h2>Step3</h2>
+            <p>{project.step3}</p>
+            <CodeEditor apiPath={apiPath} projectId={projectId} stepNum="3" config={config} readOnly={true} />
+          </Col>
+        </Row>
+
         <br></br>
         <Row>
-          <Col style={{ textAlign: 'center' }}><h3><strong>留言區</strong></h3></Col>
+          <Col style={{ textAlign: 'center', borderRadius: "5px" }}><h3><strong>留言區</strong></h3></Col>
         </Row>
-        <Row style={{ backgroundColor: 'white', minHeight: '100px', padding: '10px' }}>
+        <Row className='messageCard'>
 
           {commentRecord === "no data"
             ?
@@ -114,11 +123,10 @@ function Assessment(props) {
             )
           }
         </Row>
-        <Row style={interval}>
+        <Row className = "interval">
           <Col>
-            <Form>
-              {/*<Form.Label>您的評分：<Rating onClick={(e) => setRating(e)} ratingValue={rating} /></Form.Label>*/}
-              <Form.Control style={{ height: '50px' }} as="textarea" value={comment} onChange={(e) => setComment(e.target.value)} placeholder='請輸入您的評論' />
+            <Form className = "commentForm">
+              <Form.Control style={{ height: '80px', width: "80%" }} as="textarea" value={comment} onChange={(e) => setComment(e.target.value)} placeholder='請輸入您的評論' />
               <Button variant="success" style={{ marginTop: '20px' }} onClick={commentSubmit}>送出</Button>
             </Form>
           </Col>
@@ -131,3 +139,30 @@ function Assessment(props) {
 }
 
 export default Assessment;
+
+const style = css`
+  .messageCard{
+    background-color: white; 
+    min-height: 100px;
+    padding: 10px;
+    max-height: 200px;
+    overflow: auto;
+  }
+
+  .interval{
+    padding-top: 15px;
+    padding-bottom: 10px;
+  }
+
+  .commentForm{
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .commentForm button{
+    width: 50%;
+  }
+`

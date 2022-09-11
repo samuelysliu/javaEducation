@@ -17,7 +17,7 @@ function Header({ hasLogin }) {
         <div className={style}>
             <Navbar collapseOnSelect expand="lg" variant="dark" className="navbar">
                 <Container>
-                    <Navbar.Brand href="/"><img src={logo} style={{ width: '30px', marginRight: '5px' }}></img>Java程式教學</Navbar.Brand>
+                    <Navbar.Brand><Link to="/"><img src={logo} style={{ width: '30px', marginRight: '5px' }}></img>Java程式教學</Link></Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="me-auto">
@@ -30,12 +30,12 @@ function Header({ hasLogin }) {
                             {hasLogin ?
                                 <>
                                     <NavDropdown title={<img src={user} width='30px'></img>}>
-                                        <NavDropdown.Item href="/profile">個人檔案</NavDropdown.Item>
+                                        <NavDropdown.Item><Link to="/profile"><font>個人檔案</font></Link></NavDropdown.Item>
                                         {/*
                             <NavDropdown.Item href="#action/3.2">我的成品</NavDropdown.Item>
                             <NavDropdown.Item href="#action/3.3">收到的評論</NavDropdown.Item>*/}
                                         <NavDropdown.Divider />
-                                        <NavDropdown.Item onClick={logout}>登出</NavDropdown.Item>
+                                        <NavDropdown.Item onClick={logout}><font>登出</font></NavDropdown.Item>
                                     </NavDropdown> </> :
                                 ""
                             }
@@ -57,4 +57,9 @@ const style = css`
         color: white;
         text-decoration: none;
     }
+
+    font{
+        color: black
+    }
+
 `

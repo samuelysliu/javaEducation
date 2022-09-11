@@ -1,20 +1,17 @@
 from datetime import timedelta
 from flask import Flask, request, send_from_directory
-import requests
 from flask_restful import Api, Resource
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
-from control import userProfile, projectControl, commentControl, fileControl
-import subprocess
+from control import userProfile, projectControl, commentControl, fileControl, javaCompiler, projectStudentControl
 
 load_dotenv()
 
 app = Flask(__name__, static_folder='templates/build')
 # CORS(app, resources={r"/api/.*": {"origins": [os.getenv("REACT_APP_APIPATH")]}})
 # CORS(app, resources={r"/bsc/.*": {"origins": [os.getenv("REACT_APP_APIPATH")]}})
-CORS(app, resources={r"/master/.*": {"origins": ["192.168.100.10"]}})
 CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -33,8 +30,6 @@ def serve(path):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, 'index.html')
-
-
 
 
 class register(Resource):
@@ -65,6 +60,8 @@ class user(Resource):
     @jwt_required()
     def put(self):
         data = request.get_json()
+        user = get_jwt_identity()
+        data["userId"] = user["userId"]
         if data["type"] == 'password':
             result = userProfile.changePassword(data)
             return {"result": result}
@@ -145,40 +142,63 @@ class file(Resource):
     def get(self):
         projectId = request.args.get("projectId")
         account = request.args.get("account")
-        step = request.args.get("step")
-
+        stepNum = request.args.get("stepNum")
         fileArray = fileControl.getFileByUserAndProject(projectId, account)
 
+        if stepNum == None:
+            return {"result": fileArray}
+
         for i in fileArray:
-            if step == i["stepNum"]:
-                return send_from_directory(i["filePath"], i["fileName"])
+            if stepNum == i["stepNum"]:
+                return {"result": i["code"]}
         return {"result": "failed"}
 
     def post(self):
         user = get_jwt_identity()
+        """
         file = request.files["file"]
         fileName = file.filename
         projectId = request.form["projectId"]
         account = user["account"]
         stepNum = request.form["stepNum"]
-
-        result = fileControl.saveFile(file, fileName, projectId, account, stepNum)
+        """
+        account = user["account"]
+        result = fileControl.saveFile(request.get_json(), account)
+        projectStudentControl.saveRecord(request.get_json())
         return {"result": result}
 
 class compiler(Resource):
-    def post(self):
-        front = request.get_json()
-        data = {
-            "clientId": os.getenv("clientId_1"),
-            "clientSecret": os.getenv("clientSecret_1"),
-            "script": front["code"],
-            "language": "java",
-            "versionIndex": "3"
-        }
+    @jwt_required()
+    def __init__(self):
+        return None
 
-        response = requests.post(url="https://stage.jdoodle.com/execute", json=data)
-        print(response.text)
-        return {"result": "success"}
+    def post(self):
+        result = javaCompiler.compiler(request.get_json())
+        return {"result": result}
+        try:
+            result = javaCompiler.compiler(request.get_json())
+            return {"result": result}
+        except:
+            return {"result": "failed"}
+
+class projectStudent(Resource):
+    @jwt_required()
+    def __init__(self):
+        return None
+
+    def get(self):
+        projectId = request.args.get("projectId")
+        account = request.args.get("account")
+
+        if projectId == None and account == None:
+            return {"result": "failed"}
+        elif projectId == None:
+            result = projectStudentControl.getAllProjecyByStudent(account)
+        else:
+            result = projectStudentControl.getAllStudentByProject(projectId)
+
+        return {"result": result}
+
 
 
 api.add_resource(register, '/api/register')
@@ -187,6 +207,7 @@ api.add_resource(project, '/api/project')
 api.add_resource(comment, '/api/comment')
 api.add_resource(file, '/api/file')
 api.add_resource(compiler, '/api/compiler')
+api.add_resource(projectStudent, '/api/projectStudent')
 
 if __name__ == '__main__':
     app.run()

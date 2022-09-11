@@ -5,21 +5,20 @@ import '../index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import SideBar from '../components/sidebar';
+import { Link } from "react-router-dom";
 
-function AssessmentList(props) {
+function AssessmentList({apiPath, config}) {
     const [project, setProject] = useState([{ title: '', id: '' }])
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/addProject?projectId=', props.config).then((res) => {
-            setProject(res['data'][0]);
+        axios.get(apiPath + '/api/project', config).then((res) => {
+            setProject(res['data']["result"]);
         }).catch((error) => console.log(error));
-
-        console.log(typeof (project));
-    }, []);
+    }, [config]);
 
     return (
         <>
-            <Header />
+            <Header hasLogin={true} />
             <SideBar item='' />
             <Container>
                 <Row>
@@ -38,7 +37,7 @@ function AssessmentList(props) {
                                 {typeof project === 'string' ? ""
                                     : project.map((work) => <>
                                         <tr>
-                                            <td><a href={'/projectStudentList?projectId=' + work.id + '&title=' + work.title}>{work.title}</a></td>
+                                            <td><Link to={'/projectStudentList?projectId=' + work.id + '&title=' + work.title}>{work.title}</Link></td>
                                         </tr>
                                     </>)}
                             </tbody>

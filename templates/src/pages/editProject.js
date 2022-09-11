@@ -5,14 +5,15 @@ import '../index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import SideBar from '../components/sidebar';
+import { Link } from "react-router-dom";
 
-function EditProject(props) {
-    const apiPath = 'http://127.0.0.1:8000/'
-    const [project, setProject] = useState([{ title: '', id: '' }])
+function EditProject({apiPath, config}) {
+    const [project, setProject] = useState([{ "title": "", "class": "", "content": "", "step1": "",
+    "step2": "", "step3": "", "totalStep": "" }])
 
     useEffect(() => {
-        axios.get(apiPath + 'api/addProject?projectId=', props.config).then((res) => {
-            setProject(res['data'][0]);
+        axios.get(apiPath + '/api/project', config).then((res) => {
+            setProject(res["data"]["result"]);
         }).catch((error) => console.log(error));
 
     }, []);
@@ -39,7 +40,7 @@ function EditProject(props) {
                                 {project.map((work, index) => <>
                                     <tr>
                                         <td>{index + 1}</td>
-                                        <td><a href={'/editProjectContent?projectId=' + work.id + ''}>{work.title}</a></td>
+                                        <td><Link to={'/editProjectContent?projectId=' + work.id + ''}>{work.title}</Link></td>
                                     </tr>
                                 </>)}
                             </tbody>

@@ -10,8 +10,15 @@ class fileInfo:
         try:
             result = col.insert_one(
                 {"projectId": ObjectId(self["projectId"]), "stepNum": self["stepNum"],
-                 "account": self["account"], "filePath": self["filePath"], "fileName": self["fileName"], "createdTime": tools.getTimeNow()})
+                 "account": self["account"], "code": self["code"], "createdTime": tools.getTimeNow()})
             return result.inserted_id
+        except:
+            return "failed"
+
+    def updateFile(self):
+        try:
+            col.update_one(self["myquery"], self["newValues"])
+            return "success"
         except:
             return "failed"
 
@@ -22,7 +29,7 @@ class fileInfo:
             for i in result:
                 fileArray.append(
                     {"id": str(i["_id"]), "projectId": i["projectId"], "stepNum": i["stepNum"], "account": i["account"],
-                     "filePath": i["filePath"], "fileName": i["fileName"], "createdTime": i["createdTime"]})
+                     "code": i["code"]})
 
             return fileArray
 
@@ -36,7 +43,7 @@ class fileInfo:
             for i in result:
                 fileArray.append(
                     {"id": str(i["_id"]), "projectId": i["projectId"], "stepNum": i["stepNum"], "account": i["account"],
-                     "filePath": i["filePath"], "fileName": i["fileName"], "createdTime": i["createdTime"]})
+                     "code": i["code"]})
             return fileArray
 
         except:
@@ -49,7 +56,7 @@ class fileInfo:
             for i in result:
                 fileArray.append(
                     {"id": str(i["_id"]), "projectId": i["projectId"], "stepNum": i["stepNum"], "account": i["account"],
-                     "filePath": i["filePath"], "fileName": i["fileName"],"createdTime": i["createdTime"]})
+                     "code": i["code"]})
             return fileArray
 
         except:
@@ -57,12 +64,13 @@ class fileInfo:
 
     def getFileByUserAndProject(self):
         try:
-            result = col.find({"account": self["account"], "projectId": ObjectId(self["projectId"])}).sort({"createdTime": -1})
+            result = col.find({"account": self["account"], "projectId": ObjectId(self["projectId"])}).sort(
+                [("createdTime", -1)])
             fileArray = []
             for i in result:
                 fileArray.append(
-                    {"id": str(i["_id"]), "projectId": i["projectId"], "stepNum": i["stepNum"], "account": i["account"],
-                     "filePath": i["filePath"], "fileName": i["fileName"],"createdTime": i["createdTime"]})
+                    {"id": str(i["_id"]), "projectId": str(i["projectId"]), "stepNum": i["stepNum"], "account": i["account"],
+                     "code": i["code"]})
             return fileArray
 
         except:

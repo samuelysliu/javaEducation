@@ -5,10 +5,11 @@ export const userSlice = createSlice({
     initialState: {
         value: {
             "account": "",
-            "id": "",
+            "userId": "",
             "class": "",
             "authority": "",
-            "label": ""
+            "label": "",
+            "token": ""
         }
     },
     reducers: {

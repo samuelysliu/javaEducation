@@ -1,18 +1,18 @@
 import Header from '../components/navbar';
-import { Row, Col, Container, Button, Alert } from 'react-bootstrap';
+import { Row, Col, Container, Button } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react'
 import '../index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-import Iframe from 'react-iframe'
-import Dropzone, { useDropzone } from "react-dropzone";
-import Image from '../images/Image.png'
 import { useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux'
 import { css } from '@emotion/css'
+import CodeEditor from './codeEditor';
+import { useNavigate } from "react-router-dom";
 
 function WriteCode({apiPath, config}) {
     const userName = useSelector((state) => state.userProfile.value["account"])
+    const navigate = useNavigate();
 
     const topic = {
         textAlign: 'center'
@@ -31,46 +31,9 @@ function WriteCode({apiPath, config}) {
         }).catch((error) => console.log(error));
     }, []);
 
-    const uploadFileContent = {
-        textAlign: 'center',
-        padding: '40px',
-        border: '5px dashed #9D9D9D',
-        backgroundColor: '#fafafa',
-        color: '#46A3FF',
-        marginBottom: '20px'
-    };
-
-    const [fileNames, setFileNames] = useState([]);
-    const [file, setFile] = useState([])
-    const handleDrop = (acceptedFiles) => {
-        setFileNames(acceptedFiles.map(file => file.name));
-        setFile(acceptedFiles)
-    }
-
-
-    const handleSubmit = (event) => {
-        event.preventDefault()
-        let data = new FormData();
-        data.append('projectId', params.get('projectId'))
-        data.append('owner', userName)
-        data.append('fileName', file[0]['name'])
-        data.append('file', file[0])
-        try {
-            axios.post(apiPath + '/api/javaFile', data, config)
-                .then((res) => {
-                    window.location.href = "/"
-                    console.log(res)
-                })
-                .catch((error) => console.log(error))
-        } catch {
-
-        }
-    }
-
-
     return (
         <>
-            <Header />
+            <Header hasLogin={true} />
             <Container className={style}>
                 <Row>
                     <Col><h1>{project.title}</h1></Col>
@@ -82,49 +45,26 @@ function WriteCode({apiPath, config}) {
                     <Col>
                         <h3>第一步驟</h3>
                         <p>{project.step1}</p>
-                        <Iframe url='https://trinket.io/embed/java/0ec180e5e6' width='100%' height='356px;'></Iframe>
+                        <CodeEditor apiPath={apiPath} projectId={params.get('projectId')} stepNum="1" config={config} userName={userName} />
                     </Col>
                 </Row>
                 <Row style={interval}>
                     <Col>
                         <h3>第二步驟</h3>
                         <p>{project.step2}</p>
-                        <Iframe url='https://trinket.io/embed/java/0ec180e5e6' width='100%' height='356px;'></Iframe>
+                        <CodeEditor apiPath={apiPath} projectId={params.get('projectId')} stepNum="2" config={config} userName={userName} />
                     </Col>
                 </Row>
                 <Row style={interval}>
                     <Col>
                         <h3>第三步驟</h3>
                         <p>{project.step3}</p>
-                        <Iframe url='https://trinket.io/embed/java/0ec180e5e6' width='100%' height='356px;'></Iframe>
+                        <CodeEditor apiPath={apiPath} projectId={params.get('projectId')} stepNum="3" config={config} userName={userName} />
                     </Col>
                 </Row>
                 <Row style={interval}>
                     <Col>
-                        <Dropzone onDrop={handleDrop} accept={'.java'}>
-                            {({ getRootProps, getInputProps }) => (
-                                <div {...getRootProps({ style: uploadFileContent })}>
-                                    <input {...getInputProps()} />
-                                    <img src={Image} className="uploadFileIcon"></img>
-                                    <p><strong>請上傳您最終的Java檔</strong></p>
-                                </div>
-
-                            )}
-                        </Dropzone>
-                        <div>
-                            <strong>Files:</strong>
-                            <ul>
-                                {fileNames.map(fileName => (
-                                    <li key={fileName}>{fileName}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    </Col>
-                </Row>
-
-                <Row style={interval}>
-                    <Col>
-                        <Button onClick={handleSubmit}>確認上傳</Button>
+                        <Button onClick={() => navigate("/")}>我已完成</Button>
                     </Col>
                 </Row>
 

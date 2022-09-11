@@ -1,21 +1,17 @@
 import axios from 'axios';
-
 import { useState } from 'react';
 import Editor from "@monaco-editor/react";
 import { css } from '@emotion/css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Row, Col, Container, Button } from 'react-bootstrap';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux'
 
-function CodeEditor() {
+function CodeEditor({ apiPath, projectId, stepNum, config, readOnly }) {
+    const userName = useSelector((state) => state.userProfile.value["account"])
+
     // State variable to set users source code
     const [userCode, setUserCode] = useState(``);
-
-    // State variable to set editors default language
-    const [userLang, setUserLang] = useState("java");
-
-    // State variable to set editors default theme
-    const [userTheme, setUserTheme] = useState("vs-dark");
-
-    // State variable to set editors default font size
-    const [fontSize, setFontSize] = useState(20);
 
     // State variable to set users input
     const [userInput, setUserInput] = useState("");
@@ -27,79 +23,108 @@ function CodeEditor() {
     // while fetching data
     const [loading, setLoading] = useState(false);
 
+    const [defaultCode, setDefaultCode] = useState(
+        `// Enter your code here 
+public class Example {
+    public static void main (String[] args){
+
+    }
+}`
+    )
+
     const options = {
-        fontSize: fontSize
+        fontSize: 16,
+        readOnly: readOnly ? true : false
     }
 
     // Function to call the compile endpoint
     function compile() {
         setLoading(true);
-        if (userCode === ``) {
-            return
-        }
 
         let data = {
             code: userCode,
-            language: userLang,
+            language: "java",
+            userInput: userInput,
             input: userInput
         }
 
         // Post request to compile endpoint
-        axios.post('http://127.0.0.1:5000/api/compiler', data).then((res) => {
-            setUserOutput(res.data.output);
-        }).then(() => {
-            setLoading(false);
-        })
+        axios.post(apiPath + '/api/compiler', data, config).then((res) => {
+            setUserOutput(res["data"]["result"]);
+
+            data = {
+                projectId: projectId,
+                account: userName,
+                stepNum: stepNum,
+                code: userCode
+            }
+            //save file
+            axios.post(apiPath + "/api/file", data, config).then((res) => {
+                setLoading(false);
+            }).catch(error => console.log(error))
+
+        }).catch(error => console.log(error))
     }
 
-    // Function to clear the output screen
-    function clearOutput() {
-        setUserOutput("");
-    }
+    useEffect(() => {
+        if (userName !== "") {
+            axios.get(apiPath + "/api/file?projectId=" + projectId + "&account=" + userName + "&stepNum=" + stepNum, config).then((res) => {
+                if (res["data"]["result"] !== "failed") {
+                    setDefaultCode(res["data"]["result"])
+                }
+            }).catch(error => console.log(error))
+        }
+    }, [userName])
+
 
     return (
         <div className={style}>
-            <div className="App">
-                <div className="main">
-                    <div className="left-container">
+            <Container className="bc">
+                <Row>
+                    <Col className="codeEditor-div">
                         <Editor
                             options={options}
-                            height="calc(100vh - 50px)"
                             width="100%"
-                            theme={userTheme}
-                            language={userLang}
-                            defaultLanguage="python"
-                            defaultValue="# Enter your code here"
+                            theme="vs-dark"
+                            language="java"
+                            defaultLanguage="java"
+                            defaultValue={defaultCode}
                             onChange={(value) => { setUserCode(value) }}
+                            keepCurrentOriginalModel={true}
                         />
-                        <button className="run-btn" onClick={() => compile()}>
-                            Run
+                    </Col>
+                    {readOnly !== true ?
+                        <Col>
+                            <Row>
+                                <Col className='result-div'>
+                                    <p>Input:</p>
+                                    <div>
+                                        <input className="box" onChange=
+                                            {(e) => setUserInput(e.target.value)}>
+                                        </input>
+                                    </div>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col className='result-div'>
+                                    <h4>Output:</h4>
+                                    <div className="box">
+                                        {loading ? <p>Loading...</p> : <p>{userOutput}</p>}
+                                    </div>
+                                </Col>
+                            </Row>
+                        </Col>
+                        : ""}
+                </Row>
+                {readOnly !== true ?
+                    <Row className='bt-div'>
+                        <button onClick={compile}>
+                            Save & Run
                         </button>
-                    </div>
-                    <div className="right-container">
-                        <h4>Input:</h4>
-                        <div className="input-box">
-                            <textarea id="code-inp" onChange=
-                                {(e) => setUserInput(e.target.value)}>
-                            </textarea>
-                        </div>
-                        <h4>Output:</h4>
-                        {loading ? (
-                            <div className="spinner-box">
-                                Loading...
-                            </div>
-                        ) : (
-                            <div className="output-box">
-                                <pre>{userOutput}</pre>
-                                <button onClick={() => { clearOutput() }}
-                                    className="clear-btn">
-                                    Clear
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
+                    </Row>
+                    : ""}
+            </Container>
+
         </div>
     );
 }
@@ -107,103 +132,48 @@ function CodeEditor() {
 export default CodeEditor;
 
 const style = css`
-    .App{
-    max-height: 100vh;
-    width: 100%;
-    overflow-y: hidden;
-    background-color: #474747;
+    .bc{
+        background-color: #1E1E1E;
+        padding-bottom: 10px;
     }
-    .main{
-    display: flex;
-    height: calc(100vh - 50px);
+
+    .codeEditor-div{
+        border-color: #545454;
+        border-style: solid;
+        border-width: 0px 2px 0px 0px;
+        height: 300px;
     }
-    .left-container{
-    position: relative;
-    flex: 60%;
-    height: calc(100vh - 50px);
+
+    .result-div{
+        color: white;
+        font-size: 24px;
+        font-weight: 900;
+        padding-bottom: 5px;
     }
-    .right-container{
-    flex: 40%;
-    height: calc(100vh - 50px);
-    display: flex;
-    flex-direction: column;
-    background-color: #242424;
-    border-left: 3px solid #1f65e6;
-    padding: 5px;
+
+    .box{
+        background-color: #1E1E1E;
+        border-style: solid;
+        border-color: #545454;
+        border-width: 2px;
+        width: 100%;
+        border-radius: 8px;
+        color: white;
+        font-size: 12px;
     }
-    .input-box{
-    flex: 50%;
+
+    .bt-div{
+        position: relative;
+        left: 90%;
+        padding-top: 10px;
     }
-    .input-box textarea{
-    font-size: 16px;
-    }
-    .spinner-box{
-    flex: 50%;
-    background-color: #242424;
-    overflow-y: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    }
-    .spinner-box img{
-    width: 200px;
-    }
-    .output-box{
-    flex: 50%;
-    background-color: #242424;
-    overflow-y: auto;
-    color: white;
-    position: relative;
-    }
-    .clear-btn{
-    position: absolute;
-    bottom: 14px;
-    right: 18px;
-    width: 80px;
-    height: 40px;
-    font-size: 22px;
-    font-weight: bold;
-    color: white;
-    background-color: #1f65e6;
-    border: none;
-    border-radius: 4px;
-    transition: 0.3s;
-    cursor: pointer;
-    }
-    .output-box pre{
-    font-size: 15px;
-    white-space: pre-wrap;
-    }
-    h4{
-    color: #afec3f;
-    }
-    #code-inp{
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    resize: none;
-    background-color: #242424;
-    color: whitesmoke;
-    padding: 5px;
-    }
-    #code-inp:focus{
-    outline: none;
-    }
-    .run-btn{
-    position: absolute;
-    bottom: 10px;
-    right: 18px;
-    width: 80px;
-    height: 40px;
-    font-size: 22px;
-    font-weight: bold;
-    background-color: #afec3f;
-    border: none;
-    border-radius: 4px;
-    transition: 0.3s;
-    cursor: pointer;
-    }
-    .run-btn:active{
-    background-color: #6e9427;
+
+    .bt-div button{
+        background-color: #04AA6D;
+        border-radius: 8px;
+        border-width: 0px;
+        height: 50px;
+        color: white;
+        width: 10%;
     }
 `

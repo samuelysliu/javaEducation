@@ -1,6 +1,5 @@
 //import useState hook to create menu collapse state
 import React, { useEffect, useState } from "react";
-
 //import react pro sidebar components
 import {
     ProSidebar,
@@ -11,24 +10,26 @@ import {
     SidebarContent,
 } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
-import "../styles/sidebar.css";
 import user from '../images/user.png'
-import rightArrow from '../images/right-arrow.png'
-import leftArrow from '../images/left-arrow.png'
 import { ImProfile } from "react-icons/im"
-import { AiFillCode, AiOutlineComment, AiFillFileAdd, AiFillEdit } from "react-icons/ai"
-import { BsPersonCheckFill } from "react-icons/bs"
+import { AiFillFileAdd, AiFillEdit } from "react-icons/ai"
+import { BsFillArrowLeftCircleFill, BsFillArrowRightCircleFill } from "react-icons/bs"
 import { Button } from 'react-bootstrap';
-import axios from 'axios';
 import { useSelector } from 'react-redux'
+import { css } from '@emotion/css'
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SideBar = ({ item }) => {
     const userName = useSelector((state) => state.userProfile.value["account"])
     const authority = useSelector((state) => state.userProfile.value["authority"])
+
+    const navigate = useNavigate();
+
     let isTeacher
-    if(authority === "teacher"){
+    if (authority === "teacher") {
         isTeacher = true
-    }else{
+    } else {
         isTeacher = false
     }
 
@@ -71,9 +72,13 @@ const SideBar = ({ item }) => {
     const aStyle = {
         color: 'black'
     }
+    const logout = () => {
+        localStorage.setItem('token', "")
+        navigate("/login")
+    }
     return (
-        <>
-            <div id="sidebar">
+        <div className={style}>
+            <div className="sidebar" >
                 {/* collapsed props to change menu size using menucollapse state */}
                 <ProSidebar collapsed={menuCollapse}>
                     <SidebarHeader>
@@ -88,15 +93,15 @@ const SideBar = ({ item }) => {
                         <div className="closemenu" onClick={menuIconClick}>
                             {/* changing menu collapse icon on click */}
                             {menuCollapse ? (
-                                <img src={rightArrow} width='30px'></img>
+                                <BsFillArrowRightCircleFill size={24} />
                             ) : (
-                                <img src={leftArrow} width='30px'></img>
+                                <BsFillArrowLeftCircleFill size={24} />
                             )}
                         </div>
                         <Menu iconShape="square">
 
                             <MenuItem active={menuItem.profile} icon={<ImProfile />} onClick={() => menuItemClick('profile')}>
-                                <a href="./profile" style={aStyle}>個人檔案</a>
+                                <Link to="/profile" style={aStyle}>個人檔案</Link>
                             </MenuItem>
 
 
@@ -111,13 +116,13 @@ const SideBar = ({ item }) => {
 
                             {isTeacher ?
                                 <MenuItem active={menuItem.addProject} icon={<AiFillFileAdd />} onClick={() => menuItemClick('addProject')}>
-                                    <a href="./addProject" style={aStyle}>新增題目</a>
+                                    <Link to="/addProject" style={aStyle}>新增題目</Link>
                                 </MenuItem>
                                 : ''}
 
                             {isTeacher ?
                                 <MenuItem active={menuItem.editProject} icon={<AiFillEdit />} onClick={() => menuItemClick('editProject')}>
-                                    <a href="./editProject" style={aStyle}>編輯題目</a>
+                                    <Link to="/editProject" style={aStyle}>編輯題目</Link>
                                 </MenuItem>
                                 : ''}
 
@@ -128,13 +133,100 @@ const SideBar = ({ item }) => {
                     </SidebarContent>
                     <SidebarFooter>
                         <Menu id="logout">
-                            <MenuItem>{menuCollapse ? '' : <Button variant="primary">登出</Button>}</MenuItem>
+                            <MenuItem>{menuCollapse ? '' : <Button variant="primary" onClick={logout}>登出</Button>}</MenuItem>
                         </Menu>
                     </SidebarFooter>
                 </ProSidebar>
             </div>
-        </>
+        </div>
     );
 };
 
 export default SideBar;
+
+const style = css`
+    .sidebar {
+    float: left;
+    }
+
+    .pro-sidebar {
+        height: 100vh;
+    }
+
+    .closemenu {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        z-index: 999;
+    }
+
+    .closemenu svg{
+        color: black;
+    }
+
+
+    .pro-sidebar {
+        min-width: 100%;
+    }
+
+    .pro-sidebar.collapsed {
+        width: 80px;
+        min-width: 80px;
+    }
+
+    .pro-sidebar-inner {
+        background-color: white !important;
+        box-shadow: 0.5px 0.866px 2px 0px rgba(0, 0, 0, 0.15);
+    }
+
+    .pro-sidebar-inner .pro-sidebar-layout {
+        overflow-y: hidden;
+    }
+
+    .pro-sidebar-inner .pro-sidebar-layout .logotext {
+        text-align: center;
+        padding-top: 10px;
+        padding-bottom: 40px;
+    }
+
+    .logotext p{
+        color: black;
+        font-size: 24px;
+    }
+
+    .pro-sidebar-inner .pro-sidebar-layout ul {
+        padding: 0 5px;
+    }
+
+    .pro-sidebar-inner .pro-sidebar-layout ul .pro-inner-item {
+        color: #000;
+        margin: 10px 0px;
+        font-weight: bold;
+    }
+
+    .pro-sidebar-inner .pro-sidebar-layout ul .pro-inner-item .pro-icon-wrapper {
+        background-color: #fbf4cd !important;
+        color: #000;
+        border-radius: 3px;
+    }
+
+    .pro-sidebar-inner .pro-sidebar-layout .active {
+        z-index: -1;
+        background-image: linear-gradient(0deg, #fece00 0%, #ffe172 100%);
+    }
+
+    #logout {
+        text-align: center;
+    }
+
+    #logout button {
+        min-width: 200px;
+    width: auto;
+        max-width: 1000px;
+    }
+
+    html {
+        overflow: hidden;
+        background-color: white;
+    }
+`

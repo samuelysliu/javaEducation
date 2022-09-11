@@ -34,3 +34,7 @@ class dbInfo:
     def classList(self):
         col = db["classList"]
         return col
+
+    def projectStudend(self):
+        col = db["projectStudent"]
+        return col

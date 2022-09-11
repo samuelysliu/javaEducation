@@ -5,25 +5,33 @@ import { Row, Col, Container, Form, Button } from 'react-bootstrap';
 import React, { useState } from 'react'
 import '../index.css'
 import axios from 'axios';
+import { useSelector } from 'react-redux'
+import { useNavigate } from "react-router-dom";
 
-function Profile(props) {
+function Profile({apiPath, config}) {
+    const userName = useSelector((state) => state.userProfile.value["account"])
+    const userId = useSelector((state) => state.userProfile.value["userId"])
+    const navigate = useNavigate();
+
     const [password, setPassword] = useState()
 
     const changePassword = () => {
-        let data = new FormData()
-        data.append("username", props.username)
-        data.append("password", password)
+        let data = {
+            type: "password",
+            userId: userId,
+            password: password
+        }
 
-        axios.put('http://127.0.0.1:8000/api/userProfile', data, props.config)
+        axios.put(apiPath + '/api/user', data, config)
             .then((res) => {
-                window.location.href="/"
+                navigate("/")
             })
             .catch((error) => console.log(error))
     }
 
     return (
         <>
-            <Header />
+            <Header hasLogin={true} />
             <SideBar item='profile' />
             <Container>
                 <Row>
@@ -34,7 +42,7 @@ function Profile(props) {
                         <Form>
                             <Form.Group className="mb-3" controlId="account">
                                 <Form.Label>Account:</Form.Label>
-                                <Form.Control type="text" placeholder={props.username} disabled/>
+                                <Form.Control type="text" placeholder={userName} disabled/>
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="password">

@@ -24,14 +24,13 @@ import CodeEditor from './pages/codeEditor';
 function App() {
   const controller = new Controller()
   const apiPath = controller.viewApiPath()
-  const token = localStorage.getItem('token')
-
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
-
   const userProfile = useSelector((state) => state.userProfile.value)
   const dispatch = useDispatch()
+
+  const token = userProfile["token"] || localStorage.getItem("token")
+  const [config, setConfig] = useState({
+    headers: { Authorization: `Bearer ${token}` }
+  });
 
   const route = window.location.pathname
 
@@ -48,6 +47,12 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    setConfig({
+      headers: { Authorization: `Bearer ${token}` }
+    })
+  }, [token])
+
 
   return (
     <Router>
@@ -57,14 +62,13 @@ function App() {
         <Route path="/register" element={<Register apiPath={apiPath} />}></Route>
         <Route path="/projectlist" element={<ProjectList apiPath={apiPath} config={config} />}></Route>
         <Route path="/writeCode" element={<WriteCode apiPath={apiPath} config={config} />}></Route>
-        <Route path='/assessmentList' element={<AssessmentList config={config} />}></Route>
-        <Route path='/projectStudentList' element={<ProjectStudentList config={config} />}></Route>
-        <Route path="/assessment" element={<Assessment username={userProfile["account"]} config={config} />}></Route>
-        <Route path="/addProject" element={<AddProject config={config} />}></Route>
-        <Route path="/profile" element={<Profile username={userProfile["account"]} config={config} />}></Route>
-        <Route path="/editProject" element={<EditProject config={config} />}></Route>
-        <Route path="/editProjectContent" element={<EditProjectContent config={config} />}></Route>
-        <Route path='/codeEditor' element={<CodeEditor />}></Route>
+        <Route path='/assessmentList' element={<AssessmentList apiPath={apiPath} config={config} />}></Route>
+        <Route path='/projectStudentList' element={<ProjectStudentList apiPath={apiPath} config={config} />}></Route>
+        <Route path="/assessment" element={<Assessment apiPath={apiPath} config={config} />}></Route>
+        <Route path="/addProject" element={<AddProject apiPath={apiPath} config={config} />}></Route>
+        <Route path="/profile" element={<Profile apiPath={apiPath} config={config} />}></Route>
+        <Route path="/editProject" element={<EditProject apiPath={apiPath} config={config} />}></Route>
+        <Route path="/editProjectContent" element={<EditProjectContent apiPath={apiPath} config={config} />}></Route>
         {/*<Route path='/myProject' element={<MyProject config={config}/>}></Route>*/}
       </Routes>
     </Router >

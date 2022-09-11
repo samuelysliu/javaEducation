@@ -6,22 +6,23 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import SideBar from '../components/sidebar';
 import { useSearchParams } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-function ProjectStudentList(props) {
-    const apiPath = 'http://localhost:8000'
+function ProjectStudentList({apiPath, config}) {
     const [params, setParams] = useSearchParams();
     const [studentList, setStudentList] = useState([{ projectId: '', owener: '', filePath: '' }])
 
     useEffect(() => {
-        axios.get(apiPath+'/api/projectStudentList?projectId=' + params.get('projectId'), props.config).then((res) => {
-            setStudentList(res['data']);
+        axios.get(apiPath+'/api/projectStudent?projectId=' + params.get('projectId'), config).then((res) => {
+            console.log(res["data"]["result"])
+            setStudentList(res["data"]["result"]);
         }).catch((error) => console.log(error));
 
     }, []);
 
     return (
         <>
-            <Header />
+            <Header hasLogin={true} />
             <SideBar item='' />
             <Container>
                 <Row>
@@ -39,7 +40,7 @@ function ProjectStudentList(props) {
                             <tbody>
                                 {studentList.map((student) => <>
                                     <tr>
-                                    <td><a href={'/assessment?projectId=' + student.projectId + '&owner=' + student.owner}>{student.owner}</a></td>
+                                    <td><Link to={'/assessment?projectId=' + student.projectId + '&owner=' + student.account}>{student.account}</Link></td>
                                     </tr>
                                 </>)}
                             </tbody>

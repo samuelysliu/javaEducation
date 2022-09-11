@@ -21,8 +21,8 @@ class commentInfo:
             projectArray = []
             for i in result:
                 projectArray.append(
-                    {"id": str(i["_id"]), "projectId": i["projectId"], "commentator": i["commentator"],
-                     "comment": i["comment"], "createdTime": i["createdTime"]})
+                    {"id": str(i["_id"]), "projectId": str(i["projectId"]), "commentator": i["commentator"],
+                     "comment": i["comment"]})
 
             return projectArray
 
@@ -36,7 +36,7 @@ class commentInfo:
             for i in result:
                 projectArray.append(
                     {"id": str(i["_id"]), "projectId": i["projectId"], "commentator": i["commentator"],
-                     "comment": i["comment"], "createdTime": i["createdTime"]})
+                     "comment": i["comment"]})
 
             return projectArray
         except:

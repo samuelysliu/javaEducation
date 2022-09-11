@@ -5,8 +5,10 @@ import '../index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import SideBar from '../components/sidebar';
+import { Link } from "react-router-dom";
 
 function ProjectList({apiPath, config}) {
+
     const [project, setProject] = useState([{ title: '', id: ''}])
 
     useEffect(() => {
@@ -18,7 +20,7 @@ function ProjectList({apiPath, config}) {
 
     return (
         <>
-            <Header />
+            <Header hasLogin={true} />
             <SideBar item='' />
             <Container>
                 <Row>
@@ -36,7 +38,7 @@ function ProjectList({apiPath, config}) {
                             <tbody>
                                 {project.map((work) => <>
                                     <tr>
-                                    <td><a href={'/writeCode?projectId=' + work.id + ''}>{work.title}</a></td>
+                                    <td><Link to={'/writeCode?projectId=' + work.id}>{work.title}</Link></td>
                                     </tr>
                                 </>)}
                             </tbody>

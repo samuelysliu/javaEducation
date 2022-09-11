@@ -37,7 +37,6 @@ def changePassword(*args):
         myquery = {"_id": ObjectId(args[0]["userId"])}
         newValues = {"$set": {"password": tools.md5(args[0]["password"])}}
         result = userInfo.updateUser({"myquery": myquery, "newValues": newValues})
-
         return result
     except:
         return "failed"
