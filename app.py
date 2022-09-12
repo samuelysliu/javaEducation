@@ -10,9 +10,8 @@ from control import userProfile, projectControl, commentControl, fileControl, ja
 load_dotenv()
 
 app = Flask(__name__, static_folder='templates/build')
-# CORS(app, resources={r"/api/.*": {"origins": [os.getenv("REACT_APP_APIPATH")]}})
-# CORS(app, resources={r"/bsc/.*": {"origins": [os.getenv("REACT_APP_APIPATH")]}})
-CORS(app)
+CORS(app, resources={r"/api/.*": {"origins": [os.getenv("REACT_APP_APIPATH")]}})
+#CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['PROPAGATE_EXCEPTIONS'] = True
