@@ -31,6 +31,7 @@ def compiler(*args):
         "language": "java",
         "versionIndex": "3"
     }
-
+    print(data)
     response = requests.post(url="https://stage.jdoodle.com/execute", json=data)
+    print(response.text)
     return json.loads(response.text)["output"]

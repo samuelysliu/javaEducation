@@ -71,6 +71,7 @@ public class Example {
             axios.get(apiPath + "/api/file?projectId=" + projectId + "&account=" + userName + "&stepNum=" + stepNum, config).then((res) => {
                 if (res["data"]["result"] !== "failed") {
                     setDefaultCode(res["data"]["result"])
+                    setUserCode(res["data"]["result"])
                 }
             }).catch(error => console.log(error))
         }
