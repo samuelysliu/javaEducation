@@ -2,28 +2,28 @@ from module.dbInfo import dbInfo
 from bson.objectid import ObjectId
 import tools
 
-col = dbInfo.group(self='')
-
-
 class groupInfo:
-    def saveGroup(self):
+    def __init__(self):
+        self.col = dbInfo.group(self='')
+
+    def saveGroup(self, *args):
         try:
-            result = col.insert_one(
-                {"projectId": self["projectId"], "class": self["class"], "createdTime": tools.getTimeNow()})
+            result = self.col.insert_one(
+                {"projectId": args[0]["projectId"], "class": args[0]["class"], "createdTime": tools.getTimeNow()})
             return result.inserted_id
         except:
             return "failed"
 
-    def updateGroup(self):
+    def updateGroup(self, *args):
         try:
-            col.update_one(self["myquery"], self["newValues"])
+            self.col.update_one(args[0]["myquery"], args[0]["newValues"])
             return "success"
         except:
             return "failed"
 
-    def getGroupByClass(self):
+    def getGroupByClass(self, *args):
         try:
-            result = col.find({"class": ObjectId(self["class"])})
+            result = self.col.find({"class": ObjectId(args[0]["class"])})
             groupArray = []
             for i in result:
                 groupArray.append(i)
@@ -33,9 +33,9 @@ class groupInfo:
         except:
             return "failed"
 
-    def getGroupById(self):
+    def getGroupById(self, *args):
         try:
-            result = col.find({"_id": ObjectId(self["_id"])})
+            result = self.col.find({"_id": ObjectId(args[0]["_id"])})
             groupArray = []
             for i in result:
                 groupArray.append(i)
@@ -45,9 +45,9 @@ class groupInfo:
         except:
             return "failed"
 
-    def getGroupByProject(self):
+    def getGroupByProject(self, *args):
         try:
-            result = col.find({"projectId": ObjectId(self["projectId"])})
+            result = self.col.find({"projectId": ObjectId(args[0]["projectId"])})
             groupArray = []
             for i in result:
                 groupArray.append(i)

@@ -77,7 +77,6 @@ public class Example {
         }
     }, [userName])
 
-
     return (
         <div className={style}>
             <Container className="bc">

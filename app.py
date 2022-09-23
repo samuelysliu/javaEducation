@@ -10,7 +10,7 @@ from control import userProfile, projectControl, commentControl, fileControl, ja
 load_dotenv()
 
 app = Flask(__name__, static_folder='templates/build')
-#CORS(app, resources={r"/api/.*": {"origins": [os.getenv("REACT_APP_APIPATH")]}})
+# CORS(app, resources={r"/api/.*": {"origins": [os.getenv("REACT_APP_APIPATH")]}})
 CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -53,7 +53,8 @@ class user(Resource):
             return {"result": result}
         else:
             access_token = create_access_token(
-                identity={"userId": result["id"], "class": result["class"], "account": result["account"], "authority": result["authority"], "label": result["label"]})
+                identity={"userId": result["id"], "class": result["class"], "account": result["account"],
+                          "authority": result["authority"], "label": result["label"]})
             return {"result": result, "token": access_token}
 
     @jwt_required()
@@ -114,6 +115,7 @@ class project(Resource):
             result = "failed"
         return {"result": result}
 
+
 class comment(Resource):
     @jwt_required()
     def __init__(self):
@@ -132,6 +134,7 @@ class comment(Resource):
 
         result = commentControl.saveComment(data)
         return {"result": result}
+
 
 class file(Resource):
     @jwt_required()
@@ -154,17 +157,11 @@ class file(Resource):
 
     def post(self):
         user = get_jwt_identity()
-        """
-        file = request.files["file"]
-        fileName = file.filename
-        projectId = request.form["projectId"]
-        account = user["account"]
-        stepNum = request.form["stepNum"]
-        """
         account = user["account"]
         result = fileControl.saveFile(request.get_json(), account)
         projectStudentControl.saveRecord(request.get_json())
         return {"result": result}
+
 
 class compiler(Resource):
     @jwt_required()
@@ -179,6 +176,7 @@ class compiler(Resource):
             return {"result": result}
         except:
             return {"result": "failed"}
+
 
 class projectStudent(Resource):
     @jwt_required()
@@ -199,6 +197,16 @@ class projectStudent(Resource):
         return {"result": result}
 
 
+class group(Resource):
+    def post(self):
+        file = request.files["file"]
+        fileName = file.filename
+        """
+        projectId = request.form["projectId"]
+        account = user["account"]
+        stepNum = request.form["stepNum"]
+        """
+        userProfile.grouping(file, fileName)
 
 api.add_resource(register, '/api/register')
 api.add_resource(user, '/api/user')
@@ -207,6 +215,7 @@ api.add_resource(comment, '/api/comment')
 api.add_resource(file, '/api/file')
 api.add_resource(compiler, '/api/compiler')
 api.add_resource(projectStudent, '/api/projectStudent')
+api.add_resource(group, "/api/group")
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)

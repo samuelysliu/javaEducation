@@ -2,22 +2,22 @@ from module.dbInfo import dbInfo
 from bson.objectid import ObjectId
 import tools
 
-col = dbInfo.comment(self='')
-
-
 class commentInfo:
-    def saveComment(self):
+    def __init__(self):
+        self.col = dbInfo.comment(self='')
+
+    def saveComment(self, *args):
         try:
-            result = col.insert_one(
-                {"projectId": ObjectId(self["projectId"]), "commentator": self["commentator"],
-                 "comment": self["comment"], "createdTime": tools.getTimeNow()})
+            result = self.col.insert_one(
+                {"projectId": ObjectId(args[0]["projectId"]), "commentator": args[0]["commentator"],
+                 "comment": args[0]["comment"], "createdTime": tools.getTimeNow()})
             return result.inserted_id
         except:
             return "failed"
 
-    def getCommentByProject(self):
+    def getCommentByProject(self, *args):
         try:
-            result = col.find({"projectId": ObjectId(self["projectId"])})
+            result = self.col.find({"projectId": ObjectId(args[0]["projectId"])})
             projectArray = []
             for i in result:
                 projectArray.append(
@@ -29,9 +29,9 @@ class commentInfo:
         except:
             return "failed"
 
-    def getCommentByCommentator(self):
+    def getCommentByCommentator(self, *args):
         try:
-            result = col.find({"commentator": self["commentator"]})
+            result = self.col.find({"commentator": args[0]["commentator"]})
             projectArray = []
             for i in result:
                 projectArray.append(

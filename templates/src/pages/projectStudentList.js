@@ -6,7 +6,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import SideBar from '../components/sidebar';
 import { useSearchParams } from 'react-router-dom';
-import { Link } from "react-router-dom";
 
 function ProjectStudentList({apiPath, config}) {
     const [params, setParams] = useSearchParams();
@@ -14,7 +13,6 @@ function ProjectStudentList({apiPath, config}) {
 
     useEffect(() => {
         axios.get(apiPath+'/api/projectStudent?projectId=' + params.get('projectId'), config).then((res) => {
-            console.log(res["data"]["result"])
             setStudentList(res["data"]["result"]);
         }).catch((error) => console.log(error));
 
@@ -40,7 +38,7 @@ function ProjectStudentList({apiPath, config}) {
                             <tbody>
                                 {studentList.map((student) => <>
                                     <tr>
-                                    <td><Link to={'/assessment?projectId=' + student.projectId + '&owner=' + student.account}>{student.account}</Link></td>
+                                    <td><a href={'/assessment?projectId=' + student.projectId + '&owner=' + student.account}>{student.account}</a></td>
                                     </tr>
                                 </>)}
                             </tbody>

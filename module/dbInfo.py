@@ -17,6 +17,7 @@ class dbInfo:
     def project(self):
         col = db["project"]
         return col
+
     #all student upload file
     def file(self):
         col = db["file"]
@@ -27,14 +28,17 @@ class dbInfo:
         col = db["comment"]
         return col
 
+    #all type of group
     def group(self):
         col = db["group"]
         return col
 
+    #all type of class
     def classList(self):
         col = db["classList"]
         return col
 
-    def projectStudend(self):
+    #the student who finish the project
+    def projectStudent(self):
         col = db["projectStudent"]
         return col

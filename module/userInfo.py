@@ -2,29 +2,29 @@ from module.dbInfo import dbInfo
 from bson.objectid import ObjectId
 import tools
 
-col = dbInfo.user(self='')
-
-
 class userInfo:
-    def saveUser(self):
+    def __init__(self):
+        self.col = dbInfo.user(self='')
+
+    def saveUser(self, *args):
         try:
-            result = col.insert_one({"class": self["class"], "account": self["account"], "password": self["password"],
-                                     "authority": self["authority"], "label": self["label"],
+            result = self.col.insert_one({"class": args[0]["class"], "account": args[0]["account"], "password": args[0]["password"],
+                                     "authority": args[0]["authority"], "label": args[0]["label"],
                                      "createdTime": tools.getTimeNow()})
             return result.inserted_id
         except:
             return "failed"
 
-    def updateUser(self):
+    def updateUser(self, *args):
         try:
-            col.update_one(self["myquery"], self["newValues"])
+            self.col.update_one(args[0]["myquery"], args[0]["newValues"])
             return "success"
         except:
             return "failed"
 
     def getAllUser(self):
         try:
-            result = col.find()
+            result = self.col.find()
             userArray = []
             for i in result:
                 userArray.append(
@@ -36,9 +36,9 @@ class userInfo:
         except:
             return "failed"
 
-    def getUserById(self):
+    def getUserById(self, *args):
         try:
-            result = col.find({"_id": ObjectId(self["_id"])})
+            result = self.col.find({"_id": ObjectId(args[0]["_id"])})
             i = result[0]
             return {"id": str(i["_id"]), "class": i["class"], "account": i["account"], "password": i["password"],
                     "authority": i["authority"], "label": i["label"]}
@@ -46,9 +46,9 @@ class userInfo:
         except:
             return "failed"
 
-    def getUserByAccount(self):
+    def getUserByAccount(self, *args):
         try:
-            result = col.find({"account": self["account"]})
+            result = self.col.find({"account": args[0]["account"]})
             i = result[0]
             return {"id": str(i["_id"]), "class": i["class"], "account": i["account"], "password": i["password"],
                     "authority": i["authority"], "label": i["label"]}
@@ -56,9 +56,9 @@ class userInfo:
         except:
             return "failed"
 
-    def getUserByClass(self):
+    def getUserByClass(self, *args):
         try:
-            result = col.find({"class": self["class"]})
+            result = self.col.find({"class": args[0]["class"]})
             userArray = []
             for i in result:
                 userArray.append(
@@ -70,9 +70,9 @@ class userInfo:
         except:
             return "failed"
 
-    def userLogin(self):
+    def userLogin(self, *args):
         try:
-            result = col.find({"account": self["account"], "password": self["password"]})
+            result = self.col.find({"account": args[0]["account"], "password": args[0]["password"]})
             i = result[0]
             return {"id": str(i["_id"]), "class": i["class"], "account": i["account"], "authority": i["authority"],
                     "label": i["label"]}

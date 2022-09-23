@@ -2,29 +2,29 @@ from module.dbInfo import dbInfo
 from bson.objectid import ObjectId
 import tools
 
-col = dbInfo.file(self='')
-
-
 class fileInfo:
-    def saveFile(self):
+    def __init__(self):
+        self.col = dbInfo.file(self='')
+
+    def saveFile(self, *args):
         try:
-            result = col.insert_one(
-                {"projectId": ObjectId(self["projectId"]), "stepNum": self["stepNum"],
-                 "account": self["account"], "code": self["code"], "createdTime": tools.getTimeNow()})
+            result = self.col.insert_one(
+                {"projectId": ObjectId(args[0]["projectId"]), "stepNum": args[0]["stepNum"],
+                 "account": args[0]["account"], "code": args[0]["code"], "createdTime": tools.getTimeNow()})
             return result.inserted_id
         except:
             return "failed"
 
-    def updateFile(self):
+    def updateFile(self, *args):
         try:
-            col.update_one(self["myquery"], self["newValues"])
+            self.col.update_one(args[0]["myquery"], args[0]["newValues"])
             return "success"
         except:
             return "failed"
 
     def getAllFile(self):
         try:
-            result = col.find()
+            result = self.col.find()
             fileArray = []
             for i in result:
                 fileArray.append(
@@ -36,9 +36,9 @@ class fileInfo:
         except:
             return "failed"
 
-    def getFileByUser(self):
+    def getFileByUser(self, *args):
         try:
-            result = col.find({"account": self["account"]})
+            result = self.col.find({"account": args[0]["account"]})
             fileArray = []
             for i in result:
                 fileArray.append(
@@ -49,9 +49,9 @@ class fileInfo:
         except:
             return "failed"
 
-    def getFilByProject(self):
+    def getFilByProject(self, *args):
         try:
-            result = col.find({"projectId": ObjectId(self["projectId"])})
+            result = self.col.find({"projectId": ObjectId(args[0]["projectId"])})
             fileArray = []
             for i in result:
                 fileArray.append(
@@ -62,9 +62,9 @@ class fileInfo:
         except:
             return "failed"
 
-    def getFileByUserAndProject(self):
+    def getFileByUserAndProject(self, *args):
         try:
-            result = col.find({"account": self["account"], "projectId": ObjectId(self["projectId"])}).sort(
+            result = self.col.find({"account": args[0]["account"], "projectId": ObjectId(args[0]["projectId"])}).sort(
                 [("createdTime", -1)])
             fileArray = []
             for i in result:

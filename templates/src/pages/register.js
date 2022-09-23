@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../components/navbar';
 import { Form, Button, Container } from 'react-bootstrap';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import '../index.css'
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ function Register({apiPath}) {
     const [registerBt, setRegisterBt] = useState()
 
     const register = () => {
-        if (account != "" || password != "") {
+        if (account !== "" || password !== "") {
             let data = { "account": account, "password": password, "class": studentClass }
             axios.post(apiPath + '/api/register', data)
                 .then((res) => navigate("/login"))

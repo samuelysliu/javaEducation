@@ -11,7 +11,6 @@ import WriteCode from './pages/writeCode';
 import AddProject from './pages/addProject';
 import ProjectList from './pages/projectList';
 import Profile from './pages/profile';
-import MyProject from './pages/myProject';
 import AssessmentList from './pages/aseementList';
 import ProjectStudentList from './pages/projectStudentList';
 import EditProject from './pages/editProject';
@@ -69,7 +68,6 @@ function App() {
         <Route path="/profile" element={<Profile apiPath={apiPath} config={config} />}></Route>
         <Route path="/editProject" element={<EditProject apiPath={apiPath} config={config} />}></Route>
         <Route path="/editProjectContent" element={<EditProjectContent apiPath={apiPath} config={config} />}></Route>
-        {/*<Route path='/myProject' element={<MyProject config={config}/>}></Route>*/}
       </Routes>
     </Router >
   )

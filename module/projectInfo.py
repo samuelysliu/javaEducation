@@ -2,37 +2,37 @@ from module.dbInfo import dbInfo
 from bson.objectid import ObjectId
 import tools
 
-col = dbInfo.project(self='')
-
-
 class projectInfo:
-    def saveProject(self):
+    def __init__(self):
+        self.col = dbInfo.project(self='')
+
+    def saveProject(self, *args):
         try:
-            result = col.insert_one(
-                {"title": self["title"], "class": self["class"], "content": self["content"], "step1": self["step1"],
-                 "step2": self["step2"], "step3": self["step3"], "totalStep": 3,
+            result = self.col.insert_one(
+                {"title": args[0]["title"], "class": args[0]["class"], "content": args[0]["content"], "step1": args[0]["step1"],
+                 "step2": args[0]["step2"], "step3": args[0]["step3"], "totalStep": 3,
                  "createdTime": tools.getTimeNow()})
             return result.inserted_id
         except:
             return "failed"
 
-    def updateProject(self):
+    def updateProject(self, *args):
         try:
-            col.update_one(self["myquery"], self["newValues"])
+            self.col.update_one(args[0]["myquery"], args[0]["newValues"])
             return "success"
         except:
             return "failed"
 
-    def deleteProject(self):
+    def deleteProject(self, *args):
         try:
-            col.delete_one({"_id": ObjectId(self["id"])})
+            self.col.delete_one({"_id": ObjectId(args[0]["id"])})
             return "success"
         except:
             return "failed"
 
     def getAllProject(self):
         try:
-            result = col.find()
+            result = self.col.find()
             projectArray = []
             for i in result:
                 projectArray.append(
@@ -44,9 +44,9 @@ class projectInfo:
         except:
             return "failed"
 
-    def getProjectById(self):
+    def getProjectById(self, *args):
         try:
-            result = col.find({"_id": ObjectId(self["id"])})
+            result = self.col.find({"_id": ObjectId(args[0]["id"])})
             i = result[0]
             return {"id": str(i["_id"]), "class": i["class"], "title": i["title"], "content": i["content"],
                      "step1": i["step1"], "step2": i["step2"], "step3": i["step3"], "totalStep": 3}
@@ -54,9 +54,9 @@ class projectInfo:
         except:
             return "failed"
 
-    def getProjectBytitle(self):
+    def getProjectBytitle(self, *args):
         try:
-            result = col.find({"title": self["title"]})
+            result = self.col.find({"title": args[0]["title"]})
             i = result[0]
             return {"id": str(i["_id"]), "class": i["class"], "title": i["title"], "content": i["content"],
                      "step1": i["step1"], "step2": i["step2"], "step3": i["step3"], "totalStep": 3}
@@ -64,9 +64,9 @@ class projectInfo:
         except:
             return "failed"
 
-    def getProjectByClass(self):
+    def getProjectByClass(self, *args):
         try:
-            result = col.find({"class": self["class"]})
+            result = self.col.find({"class": args[0]["class"]})
             projectArray = []
             for i in result:
                 projectArray.append(

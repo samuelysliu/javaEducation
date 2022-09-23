@@ -2,9 +2,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../components/navbar';
 import SideBar from '../components/sidebar';
 import { Row, Col, Container, Card } from 'react-bootstrap';
-import React, { useState } from 'react'
+import React from 'react'
 import '../index.css'
-import axios from 'axios';
 import code from '../images/Code.png'
 import comment from '../images/Comment.png'
 import { useSelector } from 'react-redux'
@@ -20,9 +19,6 @@ function Index() {
     const toAssessment = () => {
         navigate("/assessmentList")
     }
-
-    const userName = useSelector((state) => state.userProfile.value["account"])
-    const authority = useSelector((state) => state.userProfile.value["authority"])
 
     return (
         <>

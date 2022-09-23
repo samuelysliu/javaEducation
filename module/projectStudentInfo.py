@@ -2,21 +2,22 @@ from module.dbInfo import dbInfo
 from bson.objectid import ObjectId
 import tools
 
-col = dbInfo.projectStudend(self='')
-
 
 class projectStudentInfo:
-    def saveProjectStudent(self):
+    def __init__(self):
+        self.col = dbInfo.projectStudent(self='')
+
+    def saveProjectStudent(self, *args):
         try:
-            result = col.insert_one({"projectId": ObjectId(self["projectId"]), "account": self["account"],
+            result = self.col.insert_one({"projectId": ObjectId(args[0]["projectId"]), "account": args[0]["account"],
                                      "createdTime": tools.getTimeNow()})
             return result.inserted_id
         except:
             return "failed"
 
-    def getAllStudentByProject(self):
+    def getAllStudentByProject(self, *args):
         try:
-            result = col.find({"projectId": ObjectId(self["projectId"])})
+            result = self.col.find({"projectId": ObjectId(args[0]["projectId"])})
             studentArray = []
             for i in result:
                 studentArray.append(
@@ -26,9 +27,9 @@ class projectStudentInfo:
         except:
             return "failed"
 
-    def getAllProjectByStudent(self):
+    def getAllProjectByStudent(self, *args):
         try:
-            result = col.find({"account": self["account"]})
+            result = self.col.find({"account": args[0]["account"]})
             studentArray = []
             for i in result:
                 studentArray.append(
@@ -38,9 +39,9 @@ class projectStudentInfo:
         except:
             return "failed"
 
-    def getRecord(self):
+    def getRecord(self, *args):
         try:
-            result = col.find({"account": self["account"], "projectId": ObjectId(self["projectId"])})
+            result = self.col.find({"account": args[0]["account"], "projectId": ObjectId(args[0]["projectId"])})
             return result[0]
         except:
             return "failed"
