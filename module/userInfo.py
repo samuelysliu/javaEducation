@@ -9,7 +9,7 @@ class userInfo:
     def saveUser(self, *args):
         try:
             result = self.col.insert_one({"class": args[0]["class"], "account": args[0]["account"], "password": args[0]["password"],
-                                     "authority": args[0]["authority"], "label": args[0]["label"],
+                                     "authority": args[0]["authority"], "label": args[0]["label"], "groupName": args[0]["groupName"],
                                      "createdTime": tools.getTimeNow()})
             return result.inserted_id
         except:
@@ -29,7 +29,7 @@ class userInfo:
             for i in result:
                 userArray.append(
                     {"id": str(i["_id"]), "class": i["class"], "account": i["account"], "password": i["password"],
-                     "authority": i["authority"], "label": i["label"]})
+                     "authority": i["authority"], "label": i["label"], "groupName": i["groupName"]})
 
             return userArray
 
@@ -41,7 +41,7 @@ class userInfo:
             result = self.col.find({"_id": ObjectId(args[0]["_id"])})
             i = result[0]
             return {"id": str(i["_id"]), "class": i["class"], "account": i["account"], "password": i["password"],
-                    "authority": i["authority"], "label": i["label"]}
+                    "authority": i["authority"], "label": i["label"], "groupName": i["groupName"]}
 
         except:
             return "failed"
@@ -51,7 +51,7 @@ class userInfo:
             result = self.col.find({"account": args[0]["account"]})
             i = result[0]
             return {"id": str(i["_id"]), "class": i["class"], "account": i["account"], "password": i["password"],
-                    "authority": i["authority"], "label": i["label"]}
+                    "authority": i["authority"], "label": i["label"], "groupName": i["groupName"]}
 
         except:
             return "failed"
@@ -63,7 +63,7 @@ class userInfo:
             for i in result:
                 userArray.append(
                     {"id": str(i["_id"]), "class": i["class"], "account": i["account"], "password": i["password"],
-                     "authority": i["authority"], "label": i["label"]})
+                     "authority": i["authority"], "label": i["label"], "groupName": i["groupName"]})
 
             return userArray
 
@@ -75,6 +75,6 @@ class userInfo:
             result = self.col.find({"account": args[0]["account"], "password": args[0]["password"]})
             i = result[0]
             return {"id": str(i["_id"]), "class": i["class"], "account": i["account"], "authority": i["authority"],
-                    "label": i["label"]}
+                    "label": i["label"], "groupName": i["groupName"]}
         except:
             return "failed"

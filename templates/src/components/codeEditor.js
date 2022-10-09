@@ -7,7 +7,7 @@ import { Row, Col, Container, Button } from 'react-bootstrap';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux'
 
-function CodeEditor({ apiPath, projectId, stepNum, config, readOnly }) {
+function CodeEditor({ apiPath, projectId, stepNum, config, readOnly, owner }) {
     const userName = useSelector((state) => state.userProfile.value["account"])
 
     // State variable to set users source code
@@ -67,15 +67,26 @@ public class Example {
     }
 
     useEffect(() => {
-        if (userName !== "") {
-            axios.get(apiPath + "/api/file?projectId=" + projectId + "&account=" + userName + "&stepNum=" + stepNum, config).then((res) => {
+        if (!readOnly) {
+            if (userName !== "") {
+                axios.get(apiPath + "/api/file?projectId=" + projectId + "&account=" + userName + "&stepNum=" + stepNum, config).then((res) => {
+                    if (res["data"]["result"] !== "failed") {
+                        setDefaultCode(res["data"]["result"])
+                        setUserCode(res["data"]["result"])
+                    }
+                }).catch(error => console.log(error))
+            }
+        } else {
+            axios.get(apiPath + "/api/file?projectId=" + projectId + "&account=" + owner + "&stepNum=" + stepNum, config).then((res) => {
                 if (res["data"]["result"] !== "failed") {
                     setDefaultCode(res["data"]["result"])
                     setUserCode(res["data"]["result"])
                 }
             }).catch(error => console.log(error))
         }
+
     }, [userName])
+
 
     return (
         <div className={style}>

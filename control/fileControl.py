@@ -9,15 +9,6 @@ def getFileByUserAndProject(projectId, account):
 
 
 def saveFile(*args):
-    """
-    filePath = 'JavaFile/' + str(account) + '/' + projectId
-    fileName = stepNum + '_' + fileName
-    if not os.path.isdir(filePath):
-        os.makedirs(filePath)
-
-    file.save(os.path.join(filePath, fileName))
-    """
-
     fileArray = getFileByUserAndProject(args[0]["projectId"], args[1])
     for i in fileArray:
         if args[0]["stepNum"] == i["stepNum"]:

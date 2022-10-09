@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux'
 import { css } from '@emotion/css'
-import CodeEditor from './codeEditor';
+import CodeEditor from '../components/codeEditor';
 import { useNavigate } from "react-router-dom";
 
 function WriteCode({apiPath, config}) {

@@ -6,7 +6,6 @@ import React from 'react'
 import '../index.css'
 import code from '../images/Code.png'
 import comment from '../images/Comment.png'
-import { useSelector } from 'react-redux'
 import { useNavigate } from "react-router-dom";
 
 function Index() {

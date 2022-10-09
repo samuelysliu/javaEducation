@@ -2,12 +2,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../components/navbar';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import '../index.css'
 import axios from 'axios';
 import { useDispatch } from 'react-redux'
 import { editUser } from '../model/userProfile'
-
 
 function Login({ apiPath }) {
     const navigate = useNavigate();
@@ -56,7 +55,7 @@ function Login({ apiPath }) {
                     <Button variant="primary" ref={node => (setLoginBt(node))} onClick={login}>
                         登入
                     </Button>
-                    <font style={{ paddingLeft: '10px' }}>還沒有帳號？<a href='/register'>前往註冊</a></font>
+                    <font style={{ paddingLeft: '10px' }}>還沒有帳號？<Link to='/register'>前往註冊</Link></font>
                 </Form>
                 <br></br>
                 {loginError

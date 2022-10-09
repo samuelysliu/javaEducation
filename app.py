@@ -5,7 +5,8 @@ from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
-from control import userProfile, projectControl, commentControl, fileControl, javaCompiler, projectStudentControl
+from control import userProfile, projectControl, commentControl, fileControl, javaCompiler, projectStudentControl, \
+    groupControl, studentControl, completeSitulation
 
 load_dotenv()
 
@@ -77,7 +78,7 @@ class project(Resource):
 
     def get(self):
         projectId = request.args.get("projectId")
-        className = request.args.get("className")
+        className = request.args.get("class")
 
         if projectId == None and className == None:
             result = projectControl.getAllProject()
@@ -123,7 +124,15 @@ class comment(Resource):
 
     def get(self):
         projectId = request.args.get("projectId")
-        result = commentControl.getCommentByProject(projectId)
+        commentator = request.args.get("commentator")
+        owner = request.args.get("owner")
+
+        if commentator == None:
+            result = commentControl.getCommentByProject(projectId, owner)
+        elif projectId == None:
+            result = commentControl.getCommentByCommentator(commentator, owner)
+        else:
+            result = commentControl.getCommentByProjectAndCommentator(projectId, commentator)
         return {"result": result}
 
     def post(self):
@@ -198,15 +207,55 @@ class projectStudent(Resource):
 
 
 class group(Resource):
+    @jwt_required()
+    def __init__(self):
+        return None
+
+    def get(self):
+        try:
+            className = request.args.get("class")
+            result = groupControl.getGroupByClass(className)
+            return {"result": result}
+        except:
+            return {"result": "failed"}
+
     def post(self):
-        file = request.files["file"]
-        fileName = file.filename
-        """
-        projectId = request.form["projectId"]
-        account = user["account"]
-        stepNum = request.form["stepNum"]
-        """
-        userProfile.grouping(file, fileName)
+        try:
+            file = request.files["file"]
+            result = groupControl.grouping(file)
+            return {"result": result}
+        except:
+            return {"result": "failed"}
+
+
+class student(Resource):
+    @jwt_required()
+    def __init__(self):
+        return None
+
+    def get(self):
+        try:
+            className = request.args.get("class")
+            result = studentControl.getUserByClass(className)
+            return {"result": result}
+        except:
+            return {"result": "failed"}
+
+
+class completeSitulaion(Resource):
+    @jwt_required()
+    def __init__(self):
+        return None
+
+    def get(self):
+        try:
+            projectId = request.args.get("projectId")
+            className = request.args.get("class")
+            result = completeSitulation.getComplteByProject(projectId, className)
+            return {"result": result}
+        except:
+            return {"result": "failed"}
+
 
 api.add_resource(register, '/api/register')
 api.add_resource(user, '/api/user')
@@ -216,6 +265,8 @@ api.add_resource(file, '/api/file')
 api.add_resource(compiler, '/api/compiler')
 api.add_resource(projectStudent, '/api/projectStudent')
 api.add_resource(group, "/api/group")
+api.add_resource(student, "/api/student")
+api.add_resource(completeSitulaion, "/api/completeSitulation")
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)

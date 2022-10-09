@@ -27,11 +27,11 @@ function AddProject({ apiPath, config }) {
 
     return (
         <>
-            <Header />
+            <Header hasLogin={true}/>
             <SideBar item='addProject' />
             <Container style={centerContainer}>
                 <Row>
-                    <Col lg={12}><h1>新增題目</h1></Col>
+                    <Col lg={12}><h1 style={{ fontWeight: "800" }}>新增題目</h1></Col>
                 </Row>
                 <Row>
                     <Col>

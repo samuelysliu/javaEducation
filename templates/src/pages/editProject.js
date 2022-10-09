@@ -20,11 +20,11 @@ function EditProject({apiPath, config}) {
 
     return (
         <>
-            <Header />
+            <Header hasLogin={true}/>
             <SideBar item='editProject' />
             <Container>
                 <Row>
-                    <Col><h1>題目</h1></Col>
+                    <Col><h1 style={{ fontWeight: "800" }}>題目</h1></Col>
                 </Row>
                 <Row>
 

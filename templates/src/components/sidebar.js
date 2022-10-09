@@ -14,6 +14,8 @@ import user from '../images/user.png'
 import { ImProfile } from "react-icons/im"
 import { AiFillFileAdd, AiFillEdit } from "react-icons/ai"
 import { BsFillArrowLeftCircleFill, BsFillArrowRightCircleFill } from "react-icons/bs"
+import { GrGroup } from "react-icons/gr"
+import { MdHomeWork } from "react-icons/md"
 import { Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux'
 import { css } from '@emotion/css'
@@ -41,7 +43,7 @@ const SideBar = ({ item }) => {
     };
 
     //當項目被點時要變黃底
-    const [menuItem, setMenuItem] = useState({ profile: false, project: false, comment: false, addProject: false, checkStudent: false, editProject: false })
+    const [menuItem, setMenuItem] = useState({ profile: false, project: false, comment: false, addProject: false, checkStudent: false, editProject: false, group: false })
 
     const menuItemClick = (item) => {
         if (item == 'profile') {
@@ -62,7 +64,14 @@ const SideBar = ({ item }) => {
         } else if (item == 'editProject') {
             setMenuItem(false)
             setMenuItem({ editProject: true })
+        } else if (item == 'group') {
+            setMenuItem(false)
+            setMenuItem({ group: true })
+        } else if (item == 'answerSitulation') {
+            setMenuItem(false)
+            setMenuItem({ answerSitulation: true })
         }
+
     }
 
     useEffect(() => {
@@ -79,13 +88,17 @@ const SideBar = ({ item }) => {
     return (
         <div className={style}>
             <div className="sidebar" >
-                {/* collapsed props to change menu size using menucollapse state */}
                 <ProSidebar collapsed={menuCollapse}>
                     <SidebarHeader>
                         <div className="logotext">
-                            {/* small and big change using menucollapse state */}
-                            {menuCollapse ? "" : <img src={user} width='80px'></img>}
-                            <p> {userName} </p>
+                            {menuCollapse ?
+                                <img src={user} width='50px'></img>
+                                :
+                                <>
+                                    <img src={user} width='80px'></img>
+                                    <p> {userName} </p>
+                                </>}
+
                         </div>
                     </SidebarHeader>
 
@@ -115,20 +128,23 @@ const SideBar = ({ item }) => {
                             </MenuItem>*/}
 
                             {isTeacher ?
-                                <MenuItem active={menuItem.addProject} icon={<AiFillFileAdd />} onClick={() => menuItemClick('addProject')}>
-                                    <Link to="/addProject" style={aStyle}>新增題目</Link>
-                                </MenuItem>
-                                : ''}
+                                <>
+                                    <MenuItem active={menuItem.addProject} icon={<AiFillFileAdd />} onClick={() => menuItemClick('addProject')}>
+                                        <Link to="/addProject" style={aStyle}>新增題目</Link>
+                                    </MenuItem>
+                                    <MenuItem active={menuItem.editProject} icon={<AiFillEdit />} onClick={() => menuItemClick('editProject')}>
+                                        <Link to="/editProject" style={aStyle}>編輯題目</Link>
+                                    </MenuItem>
+                                    <MenuItem active={menuItem.group} icon={<GrGroup />} onClick={() => menuItemClick('group')}>
+                                        <Link to="/group" style={aStyle}>查看分組</Link>
+                                    </MenuItem>
 
-                            {isTeacher ?
-                                <MenuItem active={menuItem.editProject} icon={<AiFillEdit />} onClick={() => menuItemClick('editProject')}>
-                                    <Link to="/editProject" style={aStyle}>編輯題目</Link>
-                                </MenuItem>
-                                : ''}
+                                    <MenuItem active={menuItem.answerSitulation} icon={<MdHomeWork />} onClick={() => menuItemClick('answerSitulation')}>
+                                        <Link to="/answerSitulation" style={aStyle}>學生作答情況</Link>
+                                    </MenuItem>
 
-                            {/*isTeacher ? <MenuItem active={menuItem.checkStudent} icon={<BsPersonCheckFill />} onClick={() => menuItemClick('checkStudent')}>
-                                查看學生作答情況
-                            </MenuItem> : ''*/}
+                                </>
+                                : ''}
                         </Menu>
                     </SidebarContent>
                     <SidebarFooter>

@@ -4,7 +4,6 @@ import Assessment from './pages/assessment';
 import Register from './pages/register';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import React, { useEffect, useState } from "react";
-import axios from 'axios';
 import Login from './pages/login';
 import Index from './pages';
 import WriteCode from './pages/writeCode';
@@ -17,34 +16,21 @@ import EditProject from './pages/editProject';
 import EditProjectContent from './pages/editProjectContent';
 import { Controller } from './components/controller';
 import { useSelector, useDispatch } from 'react-redux'
-import { editUser } from './model/userProfile'
-import CodeEditor from './pages/codeEditor';
+import Group from './pages/group';
+import AnswerSitulation from './pages/answerSitulation';
+import ProjectAnswerSitulation from './pages/projectAnserSitulation';
+import UserSitulaion from './pages/userSitulation';
+
 
 function App() {
   const controller = new Controller()
   const apiPath = controller.viewApiPath()
   const userProfile = useSelector((state) => state.userProfile.value)
-  const dispatch = useDispatch()
 
   const token = userProfile["token"] || localStorage.getItem("token")
   const [config, setConfig] = useState({
     headers: { Authorization: `Bearer ${token}` }
   });
-
-  const route = window.location.pathname
-
-  useEffect(() => {
-    if (userProfile["account"] === "" && (route !== '/login' && route !== '/register')) {
-      axios.get(apiPath + '/api/user', config)
-        .then((res) => {
-          dispatch(editUser(res["data"]["result"]))
-        })
-        .catch((error) => {
-          localStorage.setItem('token', '')
-          window.location.href = '/login'
-        })
-    }
-  }, []);
 
   useEffect(() => {
     setConfig({
@@ -68,6 +54,10 @@ function App() {
         <Route path="/profile" element={<Profile apiPath={apiPath} config={config} />}></Route>
         <Route path="/editProject" element={<EditProject apiPath={apiPath} config={config} />}></Route>
         <Route path="/editProjectContent" element={<EditProjectContent apiPath={apiPath} config={config} />}></Route>
+        <Route path="/group" element={<Group apiPath={apiPath} config={config} />}></Route>
+        <Route path="/answerSitulation" element={<AnswerSitulation apiPath={apiPath} config={config} />}></Route>
+        <Route path="/ProjectAnswerSitulation" element={<ProjectAnswerSitulation apiPath={apiPath} config={config} />}></Route>
+        <Route path="/userSitulation" element={<UserSitulaion apiPath={apiPath} config={config} />}></Route>
       </Routes>
     </Router >
   )

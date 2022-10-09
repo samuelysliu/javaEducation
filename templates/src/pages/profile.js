@@ -35,7 +35,7 @@ function Profile({apiPath, config}) {
             <SideBar item='profile' />
             <Container>
                 <Row>
-                <Col lg={12} xs={12}><h1>個人檔案</h1></Col>
+                <Col lg={12} xs={12}><h1 style={{ fontWeight: "800" }}>個人檔案</h1></Col>
                 </Row>
                 <Row>
                     <Col lg={12} xs={12}>

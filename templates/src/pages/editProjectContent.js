@@ -45,7 +45,7 @@ function EditProjectContent({ apiPath, config }) {
 
     return (
         <>
-            <Header />
+            <Header hasLogin={true}/>
             <SideBar item='' />
             <Container style={centerContainer}>
                 <Row>

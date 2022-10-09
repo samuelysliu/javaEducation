@@ -42,3 +42,7 @@ class dbInfo:
     def projectStudent(self):
         col = db["projectStudent"]
         return col
+
+    def commentStudent(self):
+        col = db["commentStudent"]
+        return col

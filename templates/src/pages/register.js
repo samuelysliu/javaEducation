@@ -4,15 +4,17 @@ import { Form, Button, Container } from 'react-bootstrap';
 import React, { useState } from 'react'
 import '../index.css'
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
-function Register({apiPath}) {
+function Register({ apiPath }) {
     const navigate = useNavigate();
 
     const [account, setAccount] = useState("")
     const [password, setPassword] = useState("")
     const [studentClass, setStudentClass] = useState("資一A")
+
+    const [systemMessage, setSystemMessage] = useState("")
 
     const [registerBt, setRegisterBt] = useState()
 
@@ -20,8 +22,25 @@ function Register({apiPath}) {
         if (account !== "" || password !== "") {
             let data = { "account": account, "password": password, "class": studentClass }
             axios.post(apiPath + '/api/register', data)
-                .then((res) => navigate("/login"))
+                .then((res) => {
+                    if (res["data"]["result"] == "failed") {
+                        setSystemMessage("帳號已經存在")
+
+                        setTimeout(() => {
+                            setSystemMessage("")
+                        }, 3000)
+                    } else {
+                        navigate("/login")
+                    }
+                })
                 .catch((error) => console.log(error))
+        }
+        else {
+            setSystemMessage("帳號或密碼不可以為空")
+
+            setTimeout(() => {
+                setSystemMessage("")
+            }, 3000)
         }
     }
 
@@ -54,11 +73,11 @@ function Register({apiPath}) {
                     </Form.Group>
 
                     <br></br>
-
+                    <p style={{ color: "red", fontSize: "12px" }}>{systemMessage}</p>
                     <Button variant="primary" ref={node => (setRegisterBt(node))} onClick={register}>
                         註冊
                     </Button>
-                    <font style={{ paddingLeft: '10px' }}>已經有帳號？<a href='/login'>前往登入</a></font>
+                    <font style={{ paddingLeft: '10px' }}>已經有帳號？<Link to='/login'>前往登入</Link></font>
                 </Form>
             </Container>
 

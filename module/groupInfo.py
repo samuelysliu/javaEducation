@@ -2,6 +2,7 @@ from module.dbInfo import dbInfo
 from bson.objectid import ObjectId
 import tools
 
+
 class groupInfo:
     def __init__(self):
         self.col = dbInfo.group(self='')
@@ -9,7 +10,7 @@ class groupInfo:
     def saveGroup(self, *args):
         try:
             result = self.col.insert_one(
-                {"projectId": args[0]["projectId"], "class": args[0]["class"], "createdTime": tools.getTimeNow()})
+                {"name": args[0]["name"], "class": args[0]["class"], "createdTime": tools.getTimeNow()})
             return result.inserted_id
         except:
             return "failed"
@@ -23,7 +24,7 @@ class groupInfo:
 
     def getGroupByClass(self, *args):
         try:
-            result = self.col.find({"class": ObjectId(args[0]["class"])})
+            result = self.col.find({"class": args[0]["class"]}).sort("name")
             groupArray = []
             for i in result:
                 groupArray.append(i)
@@ -45,13 +46,9 @@ class groupInfo:
         except:
             return "failed"
 
-    def getGroupByProject(self, *args):
+    def getGroupByName(self, *args):
         try:
-            result = self.col.find({"projectId": ObjectId(args[0]["projectId"])})
-            groupArray = []
-            for i in result:
-                groupArray.append(i)
-
-            return groupArray
+            result = self.col.find({"name": args[0]["name"], "class": args[0]["class"]})
+            return result[0]
         except:
             return "failed"
