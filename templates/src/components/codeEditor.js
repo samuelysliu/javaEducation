@@ -85,7 +85,7 @@ public class Example {
             }).catch(error => console.log(error))
         }
 
-    }, [userName])
+    }, [userName, config])
 
 
     return (
@@ -99,7 +99,7 @@ public class Example {
                             theme="vs-dark"
                             language="java"
                             defaultLanguage="java"
-                            defaultValue={defaultCode}
+                            value={defaultCode}
                             onChange={(value) => { setUserCode(value) }}
                             keepCurrentOriginalModel={true}
                         />

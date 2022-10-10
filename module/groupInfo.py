@@ -52,3 +52,10 @@ class groupInfo:
             return result[0]
         except:
             return "failed"
+
+    def deleteGroupByClass(self, *args):
+        try:
+            result = self.col.delete_many({"class": args[0]["class"]})
+            return result
+        except:
+            return "failed"

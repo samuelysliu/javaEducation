@@ -28,6 +28,8 @@ function Group({ apiPath, config }) {
         setIsUploadFile(true)
         let formData = new FormData();
         formData.append("file", file)
+        formData.append("class", classPage)
+        
         axios.post(apiPath + "/api/group", formData, config).then((res) => {
             setIsUploadFile(false)
             setPopUpShow(true)

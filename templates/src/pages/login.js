@@ -25,6 +25,8 @@ function Login({ apiPath }) {
             .then((res) => {
                 let userProfile = res["data"]["result"]
                 userProfile["token"] = res["data"]["token"]
+                userProfile["userId"] = res["data"]["result"].id
+                userProfile["groupName"] = String(res["data"]["result"].groupName)
                 dispatch(editUser(userProfile))
                 localStorage.setItem('token', res['data']['token'])
                 navigate("/")

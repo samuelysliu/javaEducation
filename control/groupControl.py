@@ -7,7 +7,7 @@ groupDB = groupInfo()
 userDB = userInfo()
 
 
-def grouping(file):
+def grouping(file, className):
     try:
         data = pd.read_excel(file, header=0, converters={'identity': str, 'grades': int})
         dataString = data.to_json()
@@ -65,7 +65,7 @@ def grouping(file):
 
                 groupList[i - lowNum - midNum].append(userArray[i][0])
 
-        updateGroup(groupList)
+        updateGroup(groupList, className)
 
         return "success"
     except:
@@ -79,13 +79,16 @@ def groupCaculator(userArrayLen):
         return userArrayLen // 3
 
 
-def updateGroup(groupList):
-    for i in range(len(groupList)):
-        userArray = groupDB.getGroupByName({"name": i + 1, "class": "資一A"})
-        if len(userArray) == 0:
-            groupDB.saveGroup({"name": i + 1, "class": "資一A"})
+def updateGroup(groupList, className):
+    # 刪除該班級組別，重新分組
+    groupDB.deleteGroupByClass({"class": className})
 
-        mongoCommand = {"myquery": {"name": i + 1, "class": "資一A"}, "newValues": {"$set": {}}}
+    for i in range(len(groupList)):
+        userArray = groupDB.getGroupByName({"name": i + 1, "class": className})
+        if len(userArray) == 0 or userArray == "failed":
+            groupDB.saveGroup({"name": i + 1, "class": className})
+
+        mongoCommand = {"myquery": {"name": i + 1, "class": className}, "newValues": {"$set": {}}}
         for j in range(len(groupList[i])):
             mongoCommand["newValues"]["$set"][f"member{j + 1}"] = groupList[i][j]
             userDB.updateUser(
@@ -105,5 +108,15 @@ def getGroupByClass(className):
 
 
 def getGroupByName(className, groupName):
-    group = groupDB.getGroupByName({"class": className, "name": groupName})
-    return group
+    try:
+        groupName = int(groupName)
+    except:
+        groupName = groupName
+
+    try:
+        group = groupDB.getGroupByName({"class": className, "name": groupName})
+        group['_id'] = str(group['_id'])
+        group['createdTime'] = str(group['createdTime'])
+        return group
+    except:
+        return group

@@ -47,7 +47,6 @@ function ProjectAnswerSitulation({ apiPath, config }) {
                     </Row>
                 )
             }
-
             setTableContent(tempContent)
         }).catch(error => console.log(error))
 

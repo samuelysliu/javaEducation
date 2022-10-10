@@ -15,7 +15,6 @@ function ProjectStudentList({apiPath, config}) {
         axios.get(apiPath+'/api/projectStudent?projectId=' + params.get('projectId'), config).then((res) => {
             setStudentList(res["data"]["result"]);
         }).catch((error) => console.log(error));
-
     }, []);
 
     return (

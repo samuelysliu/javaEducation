@@ -15,7 +15,7 @@ function AnswerSitulation({ apiPath, config }) {
         axios.get(apiPath + "/api/project?class=" + classPage, config).then((res) => {
             setProjectArray(res["data"]["result"])
         }).catch(error => console.log(error))
-    }, [])
+    }, [classPage])
 
     return (
         <div className={style}>

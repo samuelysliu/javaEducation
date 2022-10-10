@@ -1,22 +1,21 @@
 import Header from '../components/navbar';
 import { Row, Col, Container, Table } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react'
-import '../index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import SideBar from '../components/sidebar';
 import { Link } from "react-router-dom";
+import { useSelector } from 'react-redux'
 
-function ProjectList({apiPath, config}) {
-
-    const [project, setProject] = useState([{ title: '', id: ''}])
+function ProjectList({ apiPath, config }) {
+    const className = useSelector((state) => state.userProfile.value["class"])
+    const [project, setProject] = useState([{ title: '', id: '' }])
 
     useEffect(() => {
-        axios.get(apiPath + '/api/project', config).then((res) => {
+        axios.get(apiPath + '/api/project?class=' + className, config).then((res) => {
             setProject(res['data']["result"]);
         }).catch((error) => console.log(error));
-
-    }, []);
+    }, [className, config]);
 
     return (
         <>
@@ -38,7 +37,7 @@ function ProjectList({apiPath, config}) {
                             <tbody>
                                 {project.map((work) => <>
                                     <tr>
-                                    <td><Link to={'/writeCode?projectId=' + work.id}>{work.title}</Link></td>
+                                        <td><Link to={'/writeCode?projectId=' + work.id}>{work.title}</Link></td>
                                     </tr>
                                 </>)}
                             </tbody>

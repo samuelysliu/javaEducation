@@ -9,6 +9,7 @@ export const userSlice = createSlice({
             "class": "",
             "authority": "",
             "label": "",
+            "groupName": "",
             "token": ""
         }
     },

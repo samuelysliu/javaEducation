@@ -55,7 +55,7 @@ class user(Resource):
         else:
             access_token = create_access_token(
                 identity={"userId": result["id"], "class": result["class"], "account": result["account"],
-                          "authority": result["authority"], "label": result["label"]})
+                          "authority": result["authority"], "label": result["label"], "groupName": result["groupName"]})
             return {"result": result, "token": access_token}
 
     @jwt_required()
@@ -88,7 +88,6 @@ class project(Resource):
             result = projectControl.getProjectByClass(className)
         else:
             result = "failed"
-
         return {"result": result}
 
     def post(self):
@@ -214,7 +213,12 @@ class group(Resource):
     def get(self):
         try:
             className = request.args.get("class")
-            result = groupControl.getGroupByClass(className)
+            groupName = request.args.get("groupName")
+            if groupName == None:
+                result = groupControl.getGroupByClass(className)
+            else:
+                result = groupControl.getGroupByName(className, groupName)
+
             return {"result": result}
         except:
             return {"result": "failed"}
@@ -222,7 +226,8 @@ class group(Resource):
     def post(self):
         try:
             file = request.files["file"]
-            result = groupControl.grouping(file)
+            className = request.form["class"]
+            result = groupControl.grouping(file, className)
             return {"result": result}
         except:
             return {"result": "failed"}
@@ -248,6 +253,11 @@ class completeSitulaion(Resource):
         return None
 
     def get(self):
+        projectId = request.args.get("projectId")
+        className = request.args.get("class")
+        result = completeSitulation.getComplteByProject(projectId, className)
+        print(result)
+        return {"result": result}
         try:
             projectId = request.args.get("projectId")
             className = request.args.get("class")

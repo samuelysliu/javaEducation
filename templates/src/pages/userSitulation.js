@@ -39,7 +39,6 @@ function UserSitulaion({ apiPath, config }) {
             for (let i = 0; i < commentArray.length; i++) {
                 if (!ownerTemp.includes(commentArray[i].owner)) {
                     ownerTemp.push(commentArray[i].owner)
-                    break;
                 }
             }
             setOwnerArray(ownerTemp)

@@ -15,7 +15,7 @@ import ProjectStudentList from './pages/projectStudentList';
 import EditProject from './pages/editProject';
 import EditProjectContent from './pages/editProjectContent';
 import { Controller } from './components/controller';
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import Group from './pages/group';
 import AnswerSitulation from './pages/answerSitulation';
 import ProjectAnswerSitulation from './pages/projectAnserSitulation';
@@ -42,7 +42,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Index />}></Route>
+        <Route path="/" element={<Index apiPath={apiPath} config={config} />}></Route>
         <Route path="/login" element={<Login apiPath={apiPath} />}></Route>
         <Route path="/register" element={<Register apiPath={apiPath} />}></Route>
         <Route path="/projectlist" element={<ProjectList apiPath={apiPath} config={config} />}></Route>
