@@ -101,7 +101,7 @@ function Group({ apiPath, config }) {
                                     系統會根據您上傳的檔案自動產生新的學生分組。請依據範例格式上傳.xlsx檔。
                                 </font>
                                 <br></br>
-                                <Link to={GroupExampleFile}>下載範例檔</Link>
+                                <a href={GroupExampleFile}>下載範例檔</a>
                             </Col>
                         </Row>
                     </Col>
