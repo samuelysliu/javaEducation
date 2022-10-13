@@ -11,7 +11,7 @@ def checkCredict():
         "clientSecret": os.getenv("clientSecret_1"),
     }
     response = requests.post(url="https://api.jdoodle.com/credit-spent", json=data)
-    if json.loads(response.text)["used"] == "200":
+    if int(json.loads(response.text)["used"]) > 200:
         return os.getenv("clientId_2"), os.getenv("clientSecret_2")
     else:
         return os.getenv("clientId_1"), os.getenv("clientSecret_1")
