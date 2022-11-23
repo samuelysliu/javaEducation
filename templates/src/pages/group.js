@@ -40,6 +40,7 @@ function Group({ apiPath, config }) {
         if (studentAccount !== undefined) {
             for (let i = 0; i < studentArray.length; i++) {
                 if (studentArray[i].account === studentAccount) {
+                    console.log(studentArray[i])
                     if (studentArray[i].label === "high")
                         return "#0FE600"
                     else if (studentArray[i].label === "mid")

@@ -5,7 +5,7 @@ export class Controller{
         }else if(process.env.REACT_APP_Environment === "main"){
             this.apiPath = "http://163.14.74.159:5000"
         }else{
-            this.apiPath = "http://127.0.0.1:5000"
+            this.apiPath = "http://163.14.74.159:5000"
         }
     }
 
