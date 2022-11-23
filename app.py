@@ -224,10 +224,6 @@ class group(Resource):
             return {"result": "failed"}
 
     def post(self):
-        file = request.files["file"]
-        className = request.form["class"]
-        result = groupControl.grouping(file, className)
-        return {"result": result}
         try:
             file = request.files["file"]
             className = request.form["class"]
