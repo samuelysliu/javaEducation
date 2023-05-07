@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 import { css } from '@emotion/css'
 import CodeEditor from '../components/codeEditor';
 import { useNavigate } from "react-router-dom";
+import Countdown from '../components/countdown';
 
 function WriteCode({apiPath, config}) {
     const userName = useSelector((state) => state.userProfile.value["account"])
@@ -24,6 +25,14 @@ function WriteCode({apiPath, config}) {
     const [project, setProject] = useState({ title: '', content: '', step1: '', step2: '', step3: '' });    //設定題目的初始值，等取得實際題目內容後代入
     const [params, setParams] = useSearchParams();  //取得url 帶的值
 
+    const [deadline, setDeadline] = useState('May 7, 2023 15:50'); //設定結束時間
+    const [newDeadline, setNewDeadline] = useState('');
+
+    const changeDeadline = () => {
+        setDeadline(newDeadline);
+    };
+
+
     useEffect(() => {
         //取得題目內容
         axios.get(apiPath + '/api/project?projectId=' + params.get('projectId'), config).then((res) => {
@@ -35,6 +44,10 @@ function WriteCode({apiPath, config}) {
         <>
             <Header hasLogin={true} />
             <Container className={style}>
+                <Row>
+                    <div className="countdown" align="right"> 活動將於 { deadline } 截止</div>
+                    <Countdown deadline={deadline} />
+                </Row>
                 <Row>
                     <Col><h1>{project.title}</h1></Col>
                 </Row>
@@ -67,7 +80,7 @@ function WriteCode({apiPath, config}) {
                         <Button onClick={() => navigate("/")}>我已完成</Button>
                     </Col>
                 </Row>
-
+                
             </Container>
 
         </>
